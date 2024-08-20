@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import Button from '../Reusable/Button';
+import { HeaderMenuOptions } from '../../../../constants';
 
 export default function HeaderMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,18 +36,11 @@ export default function HeaderMenu() {
       {/* headerMenuButton */}
       <div className={`${menuOpen ? 'block' : 'hidden'} md:flex md:flex-grow md:items-center w-full md:w-auto md:ml-10`}>
         <div className="flex-grow-2  flex flex-col md:flex-row gap-8 items-center px-4 md:ml-2">
-        <Button>
-        HOME
-        </Button>
-        <Button>
-        MEDICINES
-        </Button>
-        <Button>
-        LAB
-        </Button>
-        <Button>
-        DOCTORS
-        </Button>
+        {HeaderMenuOptions.map((option) => (
+          <Button key={option.key}>
+            {option.label}
+          </Button>
+        ))}
         </div>
         
         {/* rightIcons */}

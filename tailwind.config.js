@@ -13,7 +13,17 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        'sm': '370px',
+      // => @media (min-width: 370px) { ... }
+
+      'md': '500px',
+      // => @media (min-width: 500px) { ... }
+
+      'lg': '1000px',
+      // => @media (min-width: 1000px) { ... }
+
+      'xl': '1280px',
+      // => @media (min-width: 1280px) { ... }
       },
     },
     extend: {
@@ -70,6 +80,12 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      flexGrow: {
+        '2': '2',
+      },
+      colors: {
+        'green': '#01D6A3',
       },
     },
   },

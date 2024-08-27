@@ -61,10 +61,33 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
+
+body {
+  color: rgb(var(--foreground-rgb));
+  
+  /* background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb)); */
+}}
+@layer utilities {
+  .bg-background {
+    @apply bg-gray-100; /* Replace with your desired background color */
+  }
+
+  .text-foreground {
+    @apply text-gray-800; /* Replace with your desired text color */
+  }
+  .border-border {
+    @apply border border-gray-100; /* Example: customize it as needed */
+  }
+  .text-balance {
+    text-wrap: balance;
   }
   body {
     @apply bg-background text-foreground;
   }
+
 }

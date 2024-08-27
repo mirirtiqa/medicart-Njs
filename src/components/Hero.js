@@ -1,5 +1,5 @@
-import { heroSection } from "../../../constants";
-import Button from "./Reusable/Button";
+import { heroSection } from "@/constants";
+import Button from "@/components/Reusable/Button";
 
 export default function Hero(){
     return(

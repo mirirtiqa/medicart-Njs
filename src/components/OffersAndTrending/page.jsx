@@ -34,7 +34,7 @@ const OffersAndTrending = () => {
                         <img src="/images/cancer-care-2.png" alt="Cancer Care" className="w-36 h-36 object-cover" />
                     </CardContent>
                     <CardFooter className="flex justify-center items-center">
-                        <button className="bg-[#01D6A3] text-white px-4 py-2 rounded hover:bg-opacity-90 transition">Buy Now</button>
+                        <button className="bg-[#01D6A3] text-black px-4 py-2 w-full hover:bg-white rounded hover:text-green">Buy Now</button>
                     </CardFooter>
                 </Card>
 
@@ -48,7 +48,7 @@ const OffersAndTrending = () => {
                         <img src="/images/new-medical.png" alt="New Medical" className="w-36 h-36 object-cover rounded" />
                     </CardContent>
                     <CardFooter className="flex justify-center items-center">
-                        <button className="bg-[#01D6A3] text-white px-4 py-2 rounded hover:bg-opacity-100 transition">Discover</button>
+                        <button className="bg-[#01D6A3] text-black px-4 py-2 w-full rounded hover:bg-white hover:text-green transition">Discover</button>
                     </CardFooter>
                 </Card>
                 <div className="w-full">

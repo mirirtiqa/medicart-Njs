@@ -10,7 +10,8 @@ const SpecialOffer = () => {
         if (difference > 0) {
             timeLeft = {
                 hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((difference / 1000 / 60) % 60),
+                minutes: Math.floor((difference / (1000 * 60)) % 60),
+                seconds: Math.floor((difference / 1000) % 60),
             };
         }
         return timeLeft;
@@ -39,7 +40,7 @@ const SpecialOffer = () => {
     return (
         <Link href="https://example.com/special-offer" target="_blank" rel="noopener noreferrer">
             <div className="p-6 bg-[#01D6A3] rounded shadow-md hover:shadow-lg w-96 h-48 transition-shadow duration-300 flex flex-col items-center justify-center">
-                <h3 className="text-lg font-extrabold text-center mb-2">Special Offer</h3>
+                <h3 className="text-lg font-bold text-center mb-2">SPECIAL OFFER</h3>
                 <h4 className="text-sm font-semibold text-center mb-4">LIMITED TIME OFFER</h4>
                 <div className="flex space-x-1">
                     {formatTime(timeLeft.hours || 0).map((digit, index) => (
@@ -48,6 +49,10 @@ const SpecialOffer = () => {
                     <div className="text-2xl font-bold">:</div>
                     {formatTime(timeLeft.minutes || 0).map((digit, index) => (
                         <div key={`minute-${index}`} className="bg-black text-white rounded text-2xl font-bold p-2">{digit}</div>
+                    ))}
+                    <div className="text-2xl font-bold">:</div>
+                    {formatTime(timeLeft.seconds || 0).map((digit, index) => (
+                        <div key={`second-${index}`} className="bg-black text-white rounded text-2xl font-bold p-2">{digit}</div>
                     ))}
                 </div>
             </div>

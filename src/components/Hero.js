@@ -18,7 +18,7 @@ export default function Hero(){
             <form className="flex flex-col md:flex-row gap-5 text-base md:text-lg ">
                 <input type="text" placeholder="Search for medical products or services" className="p-4 w-[60%]" />
                 <div className="w-[20%]">
-                <Button textColor="text-white" bgColor="bg-green" hoverBGColor="hover:bg-white" hoverColor="hover:text-green" padding="p-4" >Search</Button>
+                <Button textColor="text-white" bgColor="bg-green" hoverBGColor="hover:bg-white" hoverColor="hover:text-green" padding="p-4">Search</Button>
                 </div>
             </form>
 

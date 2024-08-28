@@ -17,7 +17,6 @@ display: flex;
 `;
 
 const FooterP = styled.p`
-  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 700;
   font-size: 0.8vw;
   // font-size: 18px;

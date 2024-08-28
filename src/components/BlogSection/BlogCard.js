@@ -22,8 +22,8 @@ import {
   }
 `;
 export const StyledH1 = styled.h1`
-  font-family: 'Saira', sans-serif;
-  font-size: 3vw;
+  // font-family: 'Saira', sans-serif;
+  font-size: 2.5vw;
   // font-size: 32px;
   font-weight: 700;
   line-height: 50.37px;
@@ -52,7 +52,7 @@ export const CustomCardHeader = styled(CardHeader)`
   
 `;
 export const CustomCardTitle = styled(CardTitle)`
-  font-family: 'Saira', sans-serif;
+  // font-family: 'Saira', sans-serif;
   font-size: 1.5vw;
   // font-size: 20px;
   font-weight: 700;
@@ -61,7 +61,7 @@ export const CustomCardTitle = styled(CardTitle)`
   margin:10px;
 `;
 export const CustomCardDescription = styled(CardDescription)`
-  font-family: 'Saira', sans-serif;
+  // font-family: 'Saira', sans-serif;
   font-size: 0.8vw;
   // font-size: 14px;
   font-weight: 400;
@@ -71,7 +71,7 @@ export const CustomCardDescription = styled(CardDescription)`
   margin:10px;
 `;
 export const CustomCardFooter = styled(CardFooter)`
-  font-family: 'Saira', sans-serif;
+  // font-family: 'Saira', sans-serif;
   font-size: 0.8vw;
   // font-size: 14px;
   font-weight: 400;
@@ -85,7 +85,7 @@ export const CustomCardFooter = styled(CardFooter)`
 export const FooterImage = styled(Image)`
   width: 32px;
   height: 32px;
-  border-radius: 50%; /* Makes the image rounded */
+  border-radius: 50%; 
 `;
 
 

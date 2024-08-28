@@ -39,7 +39,7 @@ const SpecialOffer = () => {
 
     return (
         <Link href="https://example.com/special-offer" target="_blank" rel="noopener noreferrer">
-            <div className="p-6 bg-[#01D6A3] rounded shadow-md hover:shadow-lg w-96 h-48 transition-shadow duration-300 flex flex-col items-center justify-center">
+            <div className="p-6 bg-[#01D6A3] rounded shadow-md hover:shadow-lg h-56 transition-shadow duration-300 flex flex-col items-center justify-center">
                 <h3 className="text-lg font-bold text-center mb-2">SPECIAL OFFER</h3>
                 <h4 className="text-sm font-semibold text-center mb-4">LIMITED TIME OFFER</h4>
                 <div className="flex space-x-1">

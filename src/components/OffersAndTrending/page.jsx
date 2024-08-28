@@ -1,3 +1,4 @@
+"use client"
 import {
     Card,
     CardHeader,
@@ -6,7 +7,8 @@ import {
     CardContent,
     CardFooter
 } from "@/components/ui/card";
-import TopCategories from "./TopCategories";
+import SpecialOffer from "@/components/OffersAndTrending/SpecialOffer";
+
 
 const OffersAndTrending = () => {
     const trendingProducts = [
@@ -18,14 +20,14 @@ const OffersAndTrending = () => {
         { name: "Book Doctor", price: "Starting at $13.99", imageSrc: "/images/Product-6.png" },
     ];
     return (
-        <div className="flex flex-col md:flex-row p-6 gap-4">
+        <div className="flex flex-col md:flex-row pl-16  gap-4">
             {/* Left Side: Special Offers */}
             <div className="md:w-1/3 w-full p-4">
                 <h2 className="text-xl text-left p-3 font-extrabold mb-4 bg-[#F1F4F6]">Special Offers</h2>
                 {/* First Card: Cancer Care */}
-                <Card className="mb-4 bg-[#F1F4F6]">
+                <Card className="mb-4 w-96 bg-[#F1F4F6]">
                     <CardHeader className="text-center">
-                        <CardTitle className="font-bold">Cancer Care</CardTitle>
+                        <CardTitle className="font-bold text-2xl">Cancer Care</CardTitle>
                         <CardDescription>By MedicareHub</CardDescription>
                     </CardHeader>
                     <CardContent className="flex justify-center items-center">
@@ -37,9 +39,9 @@ const OffersAndTrending = () => {
                 </Card>
 
                 {/* Second Card: New Medical */}
-                <Card className="mb-4 bg-[#F1F4F6]">
+                <Card className="mb-4 w-96 bg-[#F1F4F6]">
                     <CardHeader className="text-center">
-                        <CardTitle className="font-bold">New Medical</CardTitle>
+                        <CardTitle className="font-bold text-2xl">New Medical</CardTitle>
                         <CardDescription>Explore Our New</CardDescription>
                     </CardHeader>
                     <CardContent className="flex justify-center items-center">
@@ -49,6 +51,9 @@ const OffersAndTrending = () => {
                         <button className="bg-[#01D6A3] text-white px-4 py-2 rounded hover:bg-opacity-100 transition">Discover</button>
                     </CardFooter>
                 </Card>
+                <div className="w-full">
+                    <SpecialOffer />
+                </div>
             </div>
 
             {/* Right Side: Trending Products */}
@@ -94,8 +99,8 @@ const OffersAndTrending = () => {
                                 <Card className="hover:shadow-lg transition-shadow duration-300 relative">
                                     <img src="/images/cancer-care-3.jpg" alt="Cancer Care" className="w-full h-56 object-cover" />
                                     <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center space-y-1">
-                                        <h2 className="text-2xl font-semibold text-white">Cancer Care</h2> 
-                                        <p className="text-sm text-black">COMPREHENSIVE CANCER CARE</p>                                       
+                                        <h2 className="text-2xl font-semibold text-white">Cancer Care</h2>
+                                        <p className="text-sm text-black">COMPREHENSIVE CANCER CARE</p>
                                     </div>
                                 </Card>
                             </a>

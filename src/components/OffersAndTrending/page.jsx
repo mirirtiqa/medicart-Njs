@@ -20,12 +20,12 @@ const OffersAndTrending = () => {
         { name: "Book Doctor", price: "Starting at $13.99", imageSrc: "/images/Product-6.png" },
     ];
     return (
-        <div className="flex flex-col md:flex-row pl-16  gap-4">
+        <div className="flex flex-col md:flex-row p-6 ">
             {/* Left Side: Special Offers */}
             <div className="md:w-1/3 w-full p-4">
                 <h2 className="text-xl text-left p-3 font-extrabold mb-4 bg-[#F1F4F6]">Special Offers</h2>
                 {/* First Card: Cancer Care */}
-                <Card className="mb-4 w-96 bg-[#F1F4F6]">
+                <Card className="mb-4 bg-[#F1F4F6]">
                     <CardHeader className="text-center">
                         <CardTitle className="font-bold text-2xl">Cancer Care</CardTitle>
                         <CardDescription>By MedicareHub</CardDescription>
@@ -39,7 +39,7 @@ const OffersAndTrending = () => {
                 </Card>
 
                 {/* Second Card: New Medical */}
-                <Card className="mb-4 w-96 bg-[#F1F4F6]">
+                <Card className="mb-4 bg-[#F1F4F6]">
                     <CardHeader className="text-center">
                         <CardTitle className="font-bold text-2xl">New Medical</CardTitle>
                         <CardDescription>Explore Our New</CardDescription>
@@ -63,7 +63,7 @@ const OffersAndTrending = () => {
                     <div className="grid grid-cols-3 gap-3 mt-4">
                         {trendingProducts.map((product, index) => (
                             <Card key={index} className="hover:shadow-lg bg-[#F1F4F6]">
-                                <CardContent className="flex justify-center items-center p-4 pb-0">
+                                <CardContent className="flex justify-center items-center p-4">
                                     <img
                                         src={product.imageSrc}
                                         alt={product.name}

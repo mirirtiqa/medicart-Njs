@@ -3,10 +3,10 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaMapMarkerAlt, FaCl
 
 const Header = () => {
   return (
-    <header className="bg-[#033B4A] shadow-md h-[7vh]">
-      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center h-full px-4">
+    <header className="bg-[#033B4A] h-auto shadow-md md:h-[7vh]">
+      <div className="container mx-auto flex flex-col flex-wrap sm:flex-row justify-between items-center h-full px-4">
         {/* Left side: GPS icon, Doctor's office (as a link) and timings */}
-        <div className="flex flex-col sm:flex-col md:flex-row items-center sm:items-start w-full sm:w-auto md:space-x-4">
+        <div className="flex flex-col flex-wrap sm:flex-col md:flex-row items-center sm:items-start w-full sm:w-auto md:space-x-4">
           <a 
             href="https://www.google.com/maps/place/Doctor's+Office+Location" 
             target="_blank" 
@@ -24,7 +24,7 @@ const Header = () => {
         </div>
         
         {/* Right side: Social media icons and Get an Appointment button */}
-        <div className="flex items-center justify-end w-full sm:w-auto space-x-4 mt-2 sm:mt-0">
+        <div className="flex items-center flex-wrap justify-end w-full sm:w-auto space-x-4 mt-2 sm:mt-0">
           {/* Social media icons: hidden below 640px */}
           <div className="hidden sm:flex space-x-4">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white hover:text-gray-300">

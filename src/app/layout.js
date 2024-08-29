@@ -1,13 +1,9 @@
-import { Saira } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from '@/lib/registry'
-
-// const inter = Inter({ subsets: ["latin"] });
-const saira = Saira(
-  {
-    subsets: ["latin"] 
-  }
-);
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import theme from '../theme';
 
 export const metadata = {
   title: "Create Next App",
@@ -17,8 +13,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-       <body className={saira.className}>
-      <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+       <body>
+      <AppRouterCacheProvider>
+      
+      <StyledComponentsRegistry>
+      <ThemeProvider theme={theme}>
+      <CssBaseline />
+        {children}
+        </ThemeProvider>
+      </StyledComponentsRegistry>
+      
+      </AppRouterCacheProvider>
       </body>
     </html>
   );

@@ -42,7 +42,7 @@ const Header = () => {
           </div>
 
           {/* "Get an Appointment" button: stays on the right side */}
-          <button className="bg-[#01D6A3] text-white p-2 rounded hover:bg-white hover:text-green w-full">
+          <button className="bg-[#01D6A3] mb-1 md:mb-0 text-white px-4 py-1 rounded hover:bg-opacity-90 transition text-sm w-full sm:w-auto min-w-[130px]">
             Get an Appointment
           </button>
         </div>

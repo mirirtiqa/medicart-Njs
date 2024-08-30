@@ -1,21 +1,36 @@
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+"use client"
 
-
+import React from 'react';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
 
 const CardComponent = ({ title, imageSrc, link }) => {
     return (
-        <a href={link} target="_blank" rel="noopener noreferrer">
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                    <CardTitle className="text-center text-sm font-semibold">{title}</CardTitle>
-                </CardHeader>
-                <img src={imageSrc} alt={title} className="w-full h-auto object-cover"/>
-            </Card>
-        </a>
+        <Grid item xs={12} sm={6} md={4} lg={2}>
+            <a href={link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <Card style={{ transition: 'box-shadow 0.3s', cursor: 'pointer' }}
+                    onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)'}
+                    onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}>
+                    <CardHeader
+                        title={
+                            <Typography variant="h6" align="center" style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                {title}
+                            </Typography>
+                        }
+                    />
+                    <CardMedia
+                        component="img"
+                        height="140"
+                        image={imageSrc}
+                        alt={title}
+                        style={{ objectFit: 'cover' }}
+                    />
+                </Card>
+            </a>
+        </Grid>
     );
 };
 
@@ -30,13 +45,15 @@ const CardGrid = () => {
     ];
 
     return (
-        <div className="p-12 pb-28 lg:pt-28">
-            <h2 className="text-center text-2xl font-bold mb-6">Categories</h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div style={{ padding: '5rem', paddingBottom: '7rem', paddingTop : '10rem' }}>
+            <Typography paddingBottom={'7rem'} fontWeight={'bold'} variant="h4" align="center" gutterBottom>
+                Categories
+            </Typography>
+            <Grid container spacing={3}>
                 {cards.map((card, index) => (
                     <CardComponent key={index} title={card.title} imageSrc={card.imageSrc} link={card.link} />
                 ))}
-            </div>
+            </Grid>
         </div>
     );
 };

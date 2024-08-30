@@ -4,6 +4,7 @@
 import BlogCard from "./BlogCard";
 import { StyledDiv, Container ,StyledH1} from "./BlogCard";
 import MediaCard from "./MediaCard";
+import Typography from '@mui/material/Typography';
 export default function Blog(){
     const blogs = [
         {
@@ -36,7 +37,9 @@ export default function Blog(){
     return (
       <>
     <Container>
-    <StyledH1>Visit our blog</StyledH1>
+    <Typography variant="h1" component="h1">
+        Visit our Blog
+    </Typography>
      <StyledDiv>
       {blogs.map((blog) => (
           <MediaCard 

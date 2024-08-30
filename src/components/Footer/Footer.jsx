@@ -8,17 +8,18 @@ display: flex;
   width: 100%; 
   height: 30vh;
   background-color:#033B4A;
-;
+  
   justify-content: space-evenly;
   @media (max-width: 900px) {
     height:auto;
     flex-direction: column;
+    text-align:center;
   }
 `;
 
 const FooterP = styled.p`
   font-weight: 700;
-  font-size: 0.8vw;
+  // font-size: 0.8vw;
   // font-size: 18px;
   line-height: 22.63px;
   color: white;
@@ -26,17 +27,20 @@ const FooterP = styled.p`
   flex-direction: row;
   gap:5px;
   margin: 15px;
+  // text-align:center;
 `;
 
 const FooterLink = styled.a`
   color: white;
   text-decoration: none;
-  font-size: 0.8vw;
+  // font-size: 0.8vw;
   // font-size: 18px;
+  // text-align:center;
 `;
 const Footerdiv = styled.div`
 display:flex;
 flex-direction:column;
+// text-align:center;
 `;
 export default function Footer(){
     
@@ -44,11 +48,11 @@ export default function Footer(){
     return (
       <>
     <Container>
-    <div>
+    <Footerdiv>
         <FooterP>123 MEDICAL AVENUE, NEW YORK USA</FooterP>
         <FooterP>
         INFO@MEDICAREHUB.COM</FooterP>
-    </div>
+    </Footerdiv>
     <Footerdiv >
         <FooterP>OPERATING HOURS:</FooterP>
         <FooterP style={{ fontWeight: 400 }}>MONDAY - FRIDAY 9:00 - 6:00<br/>

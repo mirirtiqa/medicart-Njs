@@ -16,6 +16,7 @@ import {
   width: 100%; 
   height: 500px;
   background-color:#F1F4F6;
+  padding-bottom:2rem;
   justify-content: space-evenly;
   @media (max-width: 960px) {
     height:auto;

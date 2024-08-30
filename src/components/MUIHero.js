@@ -18,7 +18,7 @@ export default function MUIHero() {
       <Box
         sx={{
           position: 'relative',
-          top: 30,
+          top: 50,
           left: 20,
           display: 'flex',
           flexDirection: 'column',

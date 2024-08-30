@@ -37,9 +37,12 @@ export default function Blog(){
     return (
       <>
     <Container>
-    <Typography variant="h1" component="h1">
+    {/* <Typography variant="h3" component="h3" sx={{fontWeight:600}} >
         Visit our Blog
-    </Typography>
+    </Typography> */}
+    <Typography paddingBottom={'3rem'}  marginTop={'3rem'} fontWeight={'bold'} variant="h4" align="center" gutterBottom>
+                Visit our Blog
+            </Typography>
      <StyledDiv>
       {blogs.map((blog) => (
           <MediaCard 

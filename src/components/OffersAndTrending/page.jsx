@@ -9,9 +9,12 @@ import {
     Box,
 } from "@mui/material";
 import SpecialOffer from "@/components/OffersAndTrending/SpecialOffer";
-const handleClick = () => {
+const handleClick1 = () => {
     window.open('https://example.com/cancer-care', '_blank', 'noopener,noreferrer');
-  };
+};
+const handleClick2 = () => {
+    window.open('https://example.com/cancer-care', '_blank', 'noopener,noreferrer');
+};
 const OffersAndTrending = () => {
     const trendingProducts = [
         { name: "Comfortable Patient Bed", price: "$8.99", imageSrc: "/images/Product-1.jpg" },
@@ -19,6 +22,8 @@ const OffersAndTrending = () => {
         { name: "Soft Patient Bed", price: "$8.99", imageSrc: "/images/Product-3.jpg" },
         { name: "Order Lab Tests Online", price: "Starting at $13.99", imageSrc: "/images/Product-4.jpg" },
         { name: "Prescription Refill", price: "Starting at $13.99", imageSrc: "/images/Product-5.png" },
+        { name: "Book Doctor", price: "Starting at $13.99", imageSrc: "/images/Product-6.png" },
+        { name: "Ibuprofen", price: "Starting at $3.99", imageSrc: "/images/Product-6.png" },
         { name: "Book Doctor", price: "Starting at $13.99", imageSrc: "/images/Product-6.png" },
     ];
 
@@ -38,8 +43,11 @@ const OffersAndTrending = () => {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        sx={{ bgcolor: "#01D6A3", '&:hover': { bgcolor: "#fff", color: "#01D6A3" } }}
-                        onClick={handleClick}
+                        sx={{
+                            bgcolor: "#01D6A3",
+                            '&:hover': { bgcolor: "#fff", color: "#01D6A3" },
+                        }}
+                        onClick={handleClick1}
                     >
                         Buy Now
                     </Button>
@@ -53,7 +61,16 @@ const OffersAndTrending = () => {
                     <CardContent sx={{ display: "flex", justifyContent: "center" }}>
                         <img src="/images/new-medical.png" alt="New Medical" style={{ width: "144px", height: "144px" }} />
                     </CardContent>
-                    <Button fullWidth variant="contained" color="primary" sx={{ bgcolor: "#01D6A3", '&:hover': { bgcolor: "#fff", color: "#01D6A3" } }}>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                            bgcolor: "#01D6A3",
+                            '&:hover': { bgcolor: "#fff", color: "#01D6A3" },
+                        }}
+                        onClick={handleClick2}
+                    >
                         Discover
                     </Button>
                 </Card>

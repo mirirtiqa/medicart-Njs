@@ -94,22 +94,19 @@ export default function BlogCard({ title, cardImage, cardDescription, cardFooter
     <>
        <CustomCard>
         <CustomCardHeader>
-          {/* Image at the top */}
           <Image
         src={cardImage} 
         alt="Image"
-        width={300} // Set the desired width
-        height={300} // Set the desired height
-        // style={{ borderRadius: '8px' }} // Optional inline styling
+        width={300} 
+        height={300} 
       />
-      
-          {/* Title and Description below the image */}
+     
           <CustomCardTitle>{title}</CustomCardTitle>
           <CustomCardDescription>{cardDescription}</CustomCardDescription>
         </CustomCardHeader>
     
       
-        {/* Footer at the bottom */}
+
         <CustomCardFooter>
         <FooterImage
         src="/footericon.jpg"
@@ -118,7 +115,7 @@ export default function BlogCard({ title, cardImage, cardDescription, cardFooter
         height={32}
         />
           {cardFooterText}
-          {/* <p>{cardFooterText}</p> */}
+
         </CustomCardFooter>
       </CustomCard>
     </>

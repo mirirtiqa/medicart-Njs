@@ -3,6 +3,7 @@
 
 import BlogCard from "./BlogCard";
 import { StyledDiv, Container ,StyledH1} from "./BlogCard";
+import MediaCard from "./MediaCard";
 export default function Blog(){
     const blogs = [
         {
@@ -38,13 +39,12 @@ export default function Blog(){
     <StyledH1>Visit our blog</StyledH1>
      <StyledDiv>
       {blogs.map((blog) => (
-          <BlogCard 
+          <MediaCard 
               key={blog.id}
               title={blog.title}
               cardImage={blog.imageUrl}
               cardDescription={blog.description}
               cardFooterText={blog.author}
-              cardFooterIcon={blog.icon}
           />
       ))}
       </StyledDiv>

@@ -1,60 +1,154 @@
-// // src/app/components/Header.js
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import React from 'react';
+import { Box, Container, Button, Link, Typography, IconButton } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const Header = () => {
   return (
-    <header className="bg-[#033B4A] h-auto shadow-md md:h-[7vh]">
-      <div className="container mx-auto flex flex-col flex-wrap sm:flex-row justify-between items-center h-full px-4">
+    <Box
+      component="header"
+      sx={{
+        backgroundColor: '#033B4A',
+        boxShadow: 2,
+        py: 1,
+        width: '100%',
+      }}
+    >
+      <Container
+        maxWidth="lg"
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: { xs: 2, sm: 0 },
+          height: '100%',
+          px: 2,
+        }}
+      >
         {/* Left side: GPS icon, Doctor's office (as a link) and timings */}
-        <div className="flex flex-col flex-wrap sm:flex-col md:flex-row items-center sm:items-start w-full sm:w-auto md:space-x-4">
-          <a 
-            href="https://www.google.com/maps/place/Doctor's+Office+Location" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: 'center',
+            gap: { xs: 2, sm: 4 },
+            width: { xs: '100%', sm: 'auto' },
+          }}
+        >
+          <Link
+            href="https://www.google.com/maps/place/Doctor's+Office+Location"
+            target="_blank"
+            rel="noopener noreferrer"
             aria-label="Google Maps"
-            className="flex items-center text-white hover:text-gray-300"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: 'white',
+              textDecoration: 'none',
+              '&:hover': { color: 'gray.300' },
+            }}
           >
-            <FaMapMarkerAlt size="1em" />
-            <span className="ml-2 md:text-sm font-montserrat">Doctor's Office</span>
-          </a>
-          <div className="flex items-center mt-2 sm:mt-2 md:mt-0 space-x-2">
-            <FaClock size="1em" className="text-white" />
-            <p className="text-sm md:text-sm text-white font-montserrat">Open: Mon-Fri, 9:00 AM - 5:00 PM</p>
-          </div>
-        </div>
-        
-        {/* Right side: Social media icons and Get an Appointment button */}
-        <div className="flex items-center flex-wrap justify-end w-full sm:w-auto space-x-4 mt-2 sm:mt-0">
-          {/* Social media icons: hidden below 640px */}
-          <div className="hidden sm:flex space-x-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white hover:text-gray-300">
-              <FaFacebookF size="1em" />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-white hover:text-gray-300">
-              <FaTwitter size="1em" />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-white hover:text-gray-300">
-              <FaInstagram size="1em" />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-white hover:text-gray-300">
-              <FaLinkedinIn size="1em" />
-            </a>
-          </div>
+            <LocationOnIcon fontSize="small" />
+            <Typography sx={{ ml: 1, fontSize: { xs: 'body2', sm: 'body1' } }}>
+              Doctor's Office
+            </Typography>
+          </Link>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              mt: { xs: 1, sm: 0 },
+            }}
+          >
+            <AccessTimeIcon fontSize="small" sx={{ color: 'white' }} />
+            <Typography sx={{ fontSize: { xs: 'body2', sm: 'body1' }, color: 'white' }}>
+              Open: Mon-Fri, 9:00 AM - 5:00 PM
+            </Typography>
+          </Box>
+        </Box>
 
-          {/* "Get an Appointment" button: stays on the right side */}
-          <button className="bg-[#01D6A3] mb-1 md:mb-0 text-white px-4 py-1 rounded hover:bg-opacity-90 transition text-sm w-full sm:w-auto min-w-[130px]">
+        {/* Right side: Social media icons and Get an Appointment button */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            mt: { xs: 2, sm: 0 },
+            flexDirection: { xs: 'column', sm: 'row' },
+            width: '100%', // Ensure it uses the full width available
+            justifyContent: 'flex-end', // Align items to the end of the container
+          }}
+        >
+          {/* Social media icons */}
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
+            <IconButton
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              sx={{ color: 'white', '&:hover': { color: 'gray.300' } }}
+            >
+              <FacebookIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+              sx={{ color: 'white', '&:hover': { color: 'gray.300' } }}
+            >
+              <TwitterIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              sx={{ color: 'white', '&:hover': { color: 'gray.300' } }}
+            >
+              <InstagramIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              sx={{ color: 'white', '&:hover': { color: 'gray.300' } }}
+            >
+              <LinkedInIcon fontSize="small" />
+            </IconButton>
+          </Box>
+
+          {/* "Get an Appointment" button */}
+          <Button
+            variant="contained"
+            href="#appointment"
+            sx={{
+              backgroundColor: '#01D6A3',
+              color: 'white',
+              px: 4,
+              py: 1,
+              borderRadius: 1,
+              textTransform: 'none',
+              fontSize: 'small',
+              width: { xs: '100%', sm: 'auto' },
+              minWidth: 130,
+              '&:hover': { bgcolor: 'white', color: '#01D6A3' },
+              mt: { xs: 2, sm: 0 }, // Ensure space between elements on small screens
+            }}
+          >
             Get an Appointment
-          </button>
-        </div>
-      </div>
-    </header>
+          </Button>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
 export default Header;
-
-
-
-
-
-

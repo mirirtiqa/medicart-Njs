@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import Link from 'next/link';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from "@mui/material/Stack";
 
 const SpecialOffer = () => {
     const calculateTimeLeft = () => {
@@ -39,24 +42,87 @@ const SpecialOffer = () => {
 
     return (
         <Link href="https://example.com/special-offer" target="_blank" rel="noopener noreferrer">
-            <div className="p-6 bg-[#01D6A3] rounded shadow-md hover:shadow-lg h-56 transition-shadow duration-300 flex flex-col items-center justify-center">
-                <h3 className="text-lg font-bold text-center mb-2">SPECIAL OFFER</h3>
-                <h4 className="text-sm font-semibold text-center mb-4">LIMITED TIME OFFER</h4>
-                <div className="flex space-x-1">
-                    {formatTime(timeLeft.hours || 0).map((digit, index) => (
-                        <div key={`hour-${index}`} className="bg-black text-white rounded text-2xl font-bold p-2">{digit}</div>
-                    ))}
-                    <div className="text-2xl font-bold">:</div>
-                    {formatTime(timeLeft.minutes || 0).map((digit, index) => (
-                        <div key={`minute-${index}`} className="bg-black text-white rounded text-2xl font-bold p-2">{digit}</div>
-                    ))}
-                    <div className="text-2xl font-bold">:</div>
-                    {formatTime(timeLeft.seconds || 0).map((digit, index) => (
-                        <div key={`second-${index}`} className="bg-black text-white rounded text-2xl font-bold p-2">{digit}</div>
-                    ))}
-                </div>
-            </div>
-        </Link>
+      <Box
+        sx={{
+          padding: 3,
+          backgroundColor: "#01D6A3",
+          borderRadius: 2,
+          boxShadow: 3,
+          transition: "box-shadow 0.3s",
+          height: "14rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          "&:hover": {
+            boxShadow: 6,
+          },
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold" textAlign="center" mb={1}>
+          SPECIAL OFFER
+        </Typography>
+        <Typography variant="subtitle1" fontWeight="bold" textAlign="center" mb={2}>
+          LIMITED TIME OFFER
+        </Typography>
+        <Stack direction="row" spacing={1}>
+          {formatTime(timeLeft.hours || 0).map((digit, index) => (
+            <Box
+              key={`hour-${index}`}
+              sx={{
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: 1,
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                padding: 1,
+                textAlign: "center",
+              }}
+            >
+              {digit}
+            </Box>
+          ))}
+          <Typography variant="h4" fontWeight="bold">
+            :
+          </Typography>
+          {formatTime(timeLeft.minutes || 0).map((digit, index) => (
+            <Box
+              key={`minute-${index}`}
+              sx={{
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: 1,
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                padding: 1,
+                textAlign: "center",
+              }}
+            >
+              {digit}
+            </Box>
+          ))}
+          <Typography variant="h4" fontWeight="bold">
+            :
+          </Typography>
+          {formatTime(timeLeft.seconds || 0).map((digit, index) => (
+            <Box
+              key={`second-${index}`}
+              sx={{
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: 1,
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                padding: 1,
+                textAlign: "center",
+              }}
+            >
+              {digit}
+            </Box>
+          ))}
+        </Stack>
+      </Box>
+    </Link>
     );
 };
 

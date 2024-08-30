@@ -12,15 +12,26 @@ const theme = createTheme({
   typography: {
     fontFamily: saira.style.fontFamily,
     h1: {
-        fontSize: '2rem', // Base size for small screens
+        fontSize: '1rem', // Base size for small screens
         '@media (min-width:600px)': {
-          fontSize: '3rem', // Medium screens (tablets)
+          fontSize: '2rem', // Medium screens (tablets)
         },
         '@media (min-width:900px)': {
-          fontSize: '4rem', // Large screens (desktops)
+          fontSize: '3rem', // Large screens (desktops)
         },
       },
     },
+    palette: {
+      primary: {
+        main: '#000000', //black
+      },
+      secondary: {
+        main: '#ffffff', //white
+      },
+      tertiary:{
+        main:"#01D6A3", 
+    },
+  }
 });
 
 export default theme;

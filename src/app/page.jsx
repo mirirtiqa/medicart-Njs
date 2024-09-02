@@ -14,8 +14,8 @@ export default function Home() {
   return (
     <main>
      
-      <Header/>
-      <MUIHeaderMenu/>
+      {/* <Header/> */}
+      {/* <MUIHeaderMenu/> */}
       <MUIHero/>
       {/* <Hero/> */}
       <CardGrid/>

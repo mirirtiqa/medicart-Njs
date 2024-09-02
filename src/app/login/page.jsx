@@ -1,25 +1,25 @@
 "use client";
 import React, { useState, useRef } from 'react';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container } from '@mui/material';
-import { useAuth } from '@/contexts/AuthContexts'; // Adjust path as needed
-import { useRouter } from 'next/navigation'; // Use Next.js router for navigation
+import { useAuth } from '@/contexts/AuthContexts'; 
+import { useRouter } from 'next/navigation'; 
 
 export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // Next.js router for navigation
+  const router = useRouter(); 
   const emailRef = useRef();
   const passwordRef = useRef();
   const { login } = useAuth();
 
-  // Handle form submission
+
   async function handleSubmit(e) {
     e.preventDefault();
     try {
       setError('');
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      router.push('/'); // Use router.push() for navigation in Next.js
+      router.push('/'); 
     } catch (err) {
       setError('Sorry! Failed to log In');
       console.error(err.message);
@@ -76,7 +76,7 @@ export default function Login() {
         </CardContent>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Need an account? <Button href="/signup" variant="text">Sign Up</Button> {/* Use href in Material-UI Button for Next.js navigation */}
+          Need an account? <Button href="/signup" variant="text">Sign Up</Button> 
         </Typography>
       </Card>
     </Container>

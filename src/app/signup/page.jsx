@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useRef } from 'react';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container } from '@mui/material';
-import { useAuth } from '@/contexts/AuthContexts'; // Adjust path as needed
-import { useRouter } from 'next/navigation' // Next.js router for navigation
+import { useAuth } from '@/contexts/AuthContexts';
+import { useRouter } from 'next/navigation' 
 
 export default function Signup() {
   const [error, setError] = useState('');
@@ -11,9 +11,9 @@ export default function Signup() {
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const { signup } = useAuth();
-  const router = useRouter(); // Use Next.js router for navigation
+  const router = useRouter(); 
 
-  // Handle form submission
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -25,7 +25,7 @@ export default function Signup() {
       setError('');
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-      router.push('/'); // Use router.push() for navigation in Next.js
+      router.push('/'); 
     } catch (err) {
       setError('Sorry! Failed to create an account');
       console.error(err.message);
@@ -92,7 +92,7 @@ export default function Signup() {
         </CardContent>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Already have an account? <Button href="/login" variant="text">Log In</Button> {/* Use href for navigation in Next.js */}
+          Already have an account? <Button href="/login" variant="text">Log In</Button> 
         </Typography>
       </Card>
     </Container>

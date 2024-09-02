@@ -1,6 +1,5 @@
 "use client";
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import Button from '../Reusable/Button';
 import { HeaderMenuOptions } from '@/constants/index';
@@ -8,8 +7,16 @@ import { AppBar, Toolbar, IconButton, Menu, MenuItem, Typography, Box, Button as
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+
+import {useAuth} from '@/contexts/AuthContexts';
+import UserDetailsTooltip from '../UserDetailsTooltip';
 
 export default function MUIHeaderMenu() {
+  const {currentUser, logout} = useAuth();
+  const [userSignedIn,setUserSignedIn] = useState(false);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -22,6 +29,11 @@ export default function MUIHeaderMenu() {
     setMenuOpen(false);
     setAnchorEl(null);
   };
+  const router = useRouter();
+  async function handleLogout(){
+    await logout();
+    router.push('/');
+}
 
   return (
     <AppBar position="static" sx={{backgroundColor: 'secondary.main', color: 'primary.main' }}>
@@ -57,16 +69,10 @@ export default function MUIHeaderMenu() {
 
         {/* Right Icons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
-          <IconButton color="inherit" 
-             sx={{
-              '&:hover': {
-                color: 'tertiary.main', // color on hover
-              },
-            }}
-          >
-            <ShoppingCartIcon />
-          </IconButton>
-          <IconButton color="inherit"
+        {currentUser ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
+            <UserDetailsTooltip useremail={currentUser.email}>
+            <IconButton color="inherit"
             sx={{
               '&:hover': {
                 color: 'tertiary.main', // color on hover
@@ -75,8 +81,46 @@ export default function MUIHeaderMenu() {
           >
             <PersonIcon />
           </IconButton>
+            </UserDetailsTooltip>
+           
+          <MuiButton sx={{'&:hover': { 
+            color: 'tertiary.main', 
+            cursor: 'pointer'
+          }}} color="inherit" onClick={handleLogout}>
+            LOGOUT
+              {/* <Link href="/signup">LOGOUT</Link> */}
+            </MuiButton>
+          </Box>
+
+        ):
+        (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
+        <MuiButton sx={{'&:hover': { 
+            color: 'tertiary.main', 
+            cursor: 'pointer'
+          }}} color="inherit">
+              <Link href="/login">LOGIN</Link>
+            </MuiButton>
+            <MuiButton sx={{'&:hover': { 
+            color: 'tertiary.main', 
+            cursor: 'pointer'
+          }}} color="inherit">
+              <Link href="/signup">SIGNUP</Link>
+            </MuiButton>
         </Box>
 
+        )}
+        
+        <IconButton color="inherit" 
+             sx={{
+              '&:hover': {
+                color: 'tertiary.main', // color on hover
+              },
+            }}
+          >
+            <ShoppingCartIcon />
+          </IconButton>
+        </Box>
         
       </Toolbar>
     </AppBar>

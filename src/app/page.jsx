@@ -9,10 +9,11 @@ import OffersAndTrending from "@/components/OffersAndTrending/page";
 import CardGrid from "@/components/Categories/page";
 import MUIHeaderMenu from "@/components/Header/MUIHeaderMenu";
 import MUIHero from "@/components/MUIHero";
+
 export default function Home() {
   return (
     <main>
-      
+     
       <Header/>
       <MUIHeaderMenu/>
       <MUIHero/>
@@ -21,6 +22,7 @@ export default function Home() {
       <OffersAndTrending/>
       <Blog/>
       <Footer/>
+     
     </main>
   );
 }

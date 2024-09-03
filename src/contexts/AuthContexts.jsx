@@ -1,11 +1,12 @@
 "use client";
 import React, {useContext , useState, useEffect} from "react";
 import { auth } from '@/lib/firebase'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 
 
 export const AuthContext = React.createContext();
+const googleProvider = new GoogleAuthProvider();
 
 export function useAuth(){
     return useContext(AuthContext)
@@ -28,6 +29,9 @@ export function AuthProvider({children}){
 function logout(){
     signOut(auth)
 }
+function signInWithGoogle(){
+    return signInWithPopup(auth, googleProvider);
+}
 
 //figure the useEffect 
   useEffect(()=>{
@@ -46,7 +50,8 @@ function logout(){
         currentUser,
         login,
         signup,
-        logout
+        logout,
+        signInWithGoogle,
     }
     
     return (

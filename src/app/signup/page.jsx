@@ -10,7 +10,7 @@ export default function Signup() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup } = useAuth();
+  const { signup,signInWithGoogle } = useAuth();
   const router = useRouter(); 
 
 
@@ -24,13 +24,41 @@ export default function Signup() {
     try {
       setError('');
       setLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
+      const userCredential = await signup(emailRef.current.value, passwordRef.current.value);
+      const user = userCredential.user;
+      console.log(user);
+
       router.push('/'); 
     } catch (err) {
       setError('Sorry! Failed to create an account');
       console.error(err.message);
     }
     setLoading(false);
+  }
+  async function handleGoogleSignIn() {
+    setError('');  
+    setLoading(true);  
+
+    try {
+      setError('');
+      setLoading(true);
+      const result = await signInWithGoogle();
+      const user = result.user;
+      console.log(user);
+      const userDetails = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      };
+      router.push('/');
+    } catch (err) {
+      setError('Sorry! Failed to create an account');
+      console.error(err.message);
+    }
+    finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -90,8 +118,20 @@ export default function Signup() {
             </Button>
           </Box>
         </CardContent>
-
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        {/* <Typography variant="body2" align="center" sx={{ mt: 2, mb: 2,ml:2,mr:2,  border:'1px solid black',padding: 1,  }}>
+           <Button href="/login" variant="text" onClick={handleGoogleSignIn}>Sign up with Google</Button> 
+        </Typography> */}
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button 
+              variant="outlined" 
+              onClick={handleGoogleSignIn} 
+              disabled={loading}
+              sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
+            >
+              Sign up with Google
+            </Button>
+          </Box>
+        <Typography variant="body2" align="center" sx={{ mt: 2, }}>
           Already have an account? <Button href="/login" variant="text">Log In</Button> 
         </Typography>
       </Card>

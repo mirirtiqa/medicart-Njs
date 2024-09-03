@@ -3,7 +3,8 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-
+import { Menu, MenuItem,Box } from '@mui/material';
+import { useRouter } from 'next/navigation'; 
 
 
 const HtmlTooltip = styled(({ className, ...props }) => (
@@ -18,13 +19,38 @@ const HtmlTooltip = styled(({ className, ...props }) => (
   },
 }));
 
+
+
 export default function UserDetailsTooltip({children,useremail}) {
+  const router = useRouter(); 
+  function handleProfileClick(){
+    router.push('/profile')
+  }
+
+
+
   return (
     <div>
       <HtmlTooltip
         title={
           <React.Fragment>
             <Typography color="inherit">Hello, {useremail}</Typography>
+            <Box mt={1}>
+              <Typography 
+                onClick={handleProfileClick} 
+                style={{ cursor: 'pointer' }}
+                variant="body2"
+              >
+                Profile
+              </Typography>
+              <Typography 
+                onClick={() => console.log('Settings clicked')} 
+                style={{ cursor: 'pointer'}}
+                variant="body2"
+              >
+                Settings
+              </Typography>
+            </Box>
           </React.Fragment>
         }
       >

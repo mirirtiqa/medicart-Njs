@@ -8,7 +8,7 @@ export default function Profile() {
         uid: currentUser.uid || "",
         email: currentUser.email || "",
         displayName: currentUser.displayName || "",
-        photoURL: currentUser.photoUR || "",
+        photoURL: currentUser.photoURL || "",
       };
       {console.log(userDetails)
       }

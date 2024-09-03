@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContexts';
 import UserDetailsTooltip from '../UserDetailsTooltip';
+import Avatar from '@mui/material/Avatar';
 
 export default function MUIHeaderMenu() {
   const { currentUser, logout } = useAuth();
@@ -69,7 +70,7 @@ export default function MUIHeaderMenu() {
                   cursor: 'pointer',
                 },
               }}
-              onClick={() => handleNavigation(option.route)} // Route to the page when clicked
+              onClick={() => handleNavigation(option.route)} 
             >
               {option.label}
             </MuiButton>
@@ -81,15 +82,20 @@ export default function MUIHeaderMenu() {
           {currentUser ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <UserDetailsTooltip useremail={currentUser.email}>
-                <IconButton color="inherit"
+                {
+                  currentUser.photoURL ? 
+                  <Avatar alt="user picture" src={currentUser.photoURL} /> :
+                  <IconButton color="inherit"
                   sx={{
                     '&:hover': {
-                      color: 'tertiary.main', // color on hover
+                      color: 'tertiary.main', 
                     },
                   }}
                 >
                   <PersonIcon />
-                </IconButton>
+                  </IconButton>
+                }
+                
               </UserDetailsTooltip>
 
               <MuiButton sx={{
@@ -129,7 +135,7 @@ export default function MUIHeaderMenu() {
           <IconButton color="inherit"
             sx={{
               '&:hover': {
-                color: 'tertiary.main', // color on hover
+                color: 'tertiary.main', 
               },
             }}
           >

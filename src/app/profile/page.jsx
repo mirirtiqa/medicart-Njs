@@ -28,13 +28,13 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    setLoggingOut(true); // Set loggingOut to true
-    await logout(); // Wait for the logout to complete
-    router.push('/'); // Redirect to the home page
+    setLoggingOut(true); 
+    await logout(); 
+    router.push('/'); 
   };
 
   if (!userDetails || loggingOut) {
-    return null; // Do not render anything while logging out
+    return null; 
   }
 
   return (
@@ -49,6 +49,7 @@ export default function Profile() {
         gap: 2,
       }}
     >
+     
       <Typography variant="h4">Profile Details</Typography>
       <img 
         src={userDetails.photoURL} 
@@ -57,7 +58,7 @@ export default function Profile() {
       />
       <Typography variant="h6"><strong>Name:</strong> {userDetails.displayName}</Typography>
       <Typography variant="h6"><strong>Email:</strong> {userDetails.email}</Typography>
-      <Typography variant="h6"><strong>User ID:</strong> {userDetails.uid}</Typography>
+      {/* <Typography variant="h6"><strong>User ID:</strong> {userDetails.uid}</Typography> */}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Logout
       </Button>

@@ -32,6 +32,9 @@ const theme = createTheme({
       tertiary:{
         main:"#01D6A3", 
     },
+    button_color:{
+      main : "#01D6A3",
+    },
   }
 });
 

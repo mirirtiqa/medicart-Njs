@@ -1,21 +1,19 @@
 "use client";
 import Image from 'next/image';
 import { useState } from 'react';
-import Button from '../Reusable/Button';
-import { HeaderMenuOptions } from '@/constants/index';
-import { AppBar, Toolbar, IconButton, Menu, MenuItem, Typography, Box, Button as MuiButton } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Box, Button as MuiButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContexts';
 import UserDetailsTooltip from '../UserDetailsTooltip';
+import Avatar from '@mui/material/Avatar';
+import { HeaderMenuOptions } from '@/constants/index';
 
 export default function MUIHeaderMenu() {
   const { currentUser, logout } = useAuth();
-  const [userSignedIn, setUserSignedIn] = useState(false);
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -28,11 +26,13 @@ export default function MUIHeaderMenu() {
     setMenuOpen(false);
     setAnchorEl(null);
   };
+
   const router = useRouter();
   async function handleLogout() {
     await logout();
     router.push('/');
   }
+
   const handleNavigation = (route) => {
     router.push(route);
   };
@@ -69,7 +69,7 @@ export default function MUIHeaderMenu() {
                   cursor: 'pointer',
                 },
               }}
-              onClick={() => handleNavigation(option.route)} // Route to the page when clicked
+              onClick={() => handleNavigation(option.route)}
             >
               {option.label}
             </MuiButton>
@@ -81,62 +81,52 @@ export default function MUIHeaderMenu() {
           {currentUser ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <UserDetailsTooltip useremail={currentUser.email}>
-                <IconButton color="inherit"
-                  sx={{
-                    '&:hover': {
-                      color: 'tertiary.main', // color on hover
-                    },
-                  }}
-                >
-                  <PersonIcon />
-                </IconButton>
+                {currentUser.photoURL ? (
+                  <Avatar alt="user picture" src={currentUser.photoURL} sx={{cursor : 'pointer'}}/>
+                ) : (
+                  <IconButton color="inherit"
+                    sx={{
+                      '&:hover': {
+                        color: 'tertiary.main',
+                      },
+                    }}
+                  >
+                    <PersonIcon />
+                  </IconButton>
+                )}
               </UserDetailsTooltip>
-
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <MuiButton sx={{
                 '&:hover': {
                   color: 'tertiary.main',
                   cursor: 'pointer'
                 }
-              }} color="inherit" onClick={handleLogout}>
-                LOGOUT
-                {/* <Link href="/signup">LOGOUT</Link> */}
+              }} color="inherit">
+                <Link href="/login">LOGIN</Link>
+              </MuiButton>
+              <MuiButton sx={{
+                '&:hover': {
+                  color: 'tertiary.main',
+                  cursor: 'pointer'
+                }
+              }} color="inherit">
+                <Link href="/signup">SIGNUP</Link>
               </MuiButton>
             </Box>
-
-          ) :
-            (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
-                <MuiButton sx={{
-                  '&:hover': {
-                    color: 'tertiary.main',
-                    cursor: 'pointer'
-                  }
-                }} color="inherit">
-                  <Link href="/login">LOGIN</Link>
-                </MuiButton>
-                <MuiButton sx={{
-                  '&:hover': {
-                    color: 'tertiary.main',
-                    cursor: 'pointer'
-                  }
-                }} color="inherit">
-                  <Link href="/signup">SIGNUP</Link>
-                </MuiButton>
-              </Box>
-
-            )}
+          )}
 
           <IconButton color="inherit"
             sx={{
               '&:hover': {
-                color: 'tertiary.main', // color on hover
+                color: 'tertiary.main',
               },
             }}
           >
             <ShoppingCartIcon />
           </IconButton>
         </Box>
-
       </Toolbar>
     </AppBar>
   );

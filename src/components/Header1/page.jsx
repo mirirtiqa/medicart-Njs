@@ -14,7 +14,7 @@ const Header = () => {
       sx={{
         backgroundColor: '#033B4A',
         boxShadow: 2,
-        py: 1,
+        py: 0.5,
         width: '100%',
       }}
     >
@@ -25,7 +25,6 @@ const Header = () => {
           flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
           alignItems: 'center',
-          gap: { xs: 2, sm: 0 },
           height: '100%',
           px: 2,
         }}
@@ -36,7 +35,7 @@ const Header = () => {
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
-            gap: { xs: 2, sm: 4 },
+            // gap: { xs: 2, sm: 4 },
             width: { xs: '100%', sm: 'auto' },
           }}
         >
@@ -54,7 +53,7 @@ const Header = () => {
             }}
           >
             <LocationOnIcon fontSize="small" />
-            <Typography sx={{ ml: 1, fontSize: { xs: 'body2', sm: 'body1' } }}>
+            <Typography sx={{ ml: 1, fontSize: { xs: 'auto', sm: 'body1' } }}>
               Doctor's Office
             </Typography>
           </Link>
@@ -67,7 +66,7 @@ const Header = () => {
             }}
           >
             <AccessTimeIcon fontSize="small" sx={{ color: 'white' }} />
-            <Typography sx={{ fontSize: { xs: 'body2', sm: 'body1' }, color: 'white' }}>
+            <Typography sx={{ fontSize: { xs: 'auto', sm: 'body1' }, color: 'white' }}>
               Open: Mon-Fri, 9:00 AM - 5:00 PM
             </Typography>
           </Box>
@@ -79,14 +78,14 @@ const Header = () => {
             display: 'flex',
             alignItems: 'center',
             gap: 2,
-            mt: { xs: 2, sm: 0 },
+            mt: { xs: 0, sm: 0 },
             flexDirection: { xs: 'column', sm: 'row' },
             width: '100%', // Ensure it uses the full width available
             justifyContent: 'flex-end', // Align items to the end of the container
           }}
         >
           {/* Social media icons */}
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
+          <Box sx={{ display: { xs: 'none', sm: 'flex', gap : 2 }}}>
             <IconButton
               href="https://facebook.com"
               target="_blank"
@@ -132,7 +131,6 @@ const Header = () => {
             sx={{
               backgroundColor: '#01D6A3',
               color: 'white',
-              px: 4,
               py: 1,
               borderRadius: 1,
               textTransform: 'none',
@@ -140,7 +138,7 @@ const Header = () => {
               width: { xs: '100%', sm: 'auto' },
               minWidth: 130,
               '&:hover': { bgcolor: 'white', color: '#01D6A3' },
-              mt: { xs: 2, sm: 0 }, // Ensure space between elements on small screens
+              mb: { xs: 0.5, sm: 0 }, // Ensure space between elements on small screens
             }}
           >
             Get an Appointment

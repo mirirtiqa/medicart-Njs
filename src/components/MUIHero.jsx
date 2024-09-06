@@ -1,30 +1,30 @@
 import { heroSection } from "@/constants";
-
-import { Box,  Button,Typography, TextField, InputBase } from '@mui/material';
+import { Box, Button, Typography, InputBase } from '@mui/material';
 
 export default function MUIHero() {
   return (
     <Box
       component="section"
       sx={{
-        width: '100%',
-        height: '100vh',
+        width : '100%',
+        height: { xs: '100vh', sm: '100vh' },
         backgroundSize: 'cover',
         display: 'flex',
         backgroundImage: "url('/heroBG.png')",
+        paddingTop: { xs: 10, md: 10 }, // Padding for small screens
       }}
     >
       {/* Left Section */}
       <Box
         sx={{
           position: 'relative',
-          top: 100,
-          left: 50,
+          top: { xs: 0, md: 100 }, // Adjust top positioning for mobile
+          left: { xs: 0, md: 50 }, // Adjust left positioning for mobile
           display: 'flex',
           flexDirection: 'column',
           gap: 3,
-          width: { md: '60%' },
-          height: { md: '75%' },
+          width: { xs: '100%', md: '60%' }, // Full width for small screens
+          paddingX: { xs: 2, md: 0 },
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -66,7 +66,7 @@ export default function MUIHero() {
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
             gap: 2,
-            fontSize: { xs: '1rem', md: '1.125rem' },
+            width: '100%', // Ensure full width for mobile
           }}
         >
           <InputBase
@@ -74,12 +74,12 @@ export default function MUIHero() {
             sx={{
               p: 2,
               width: { xs: '100%', md: '60%' },
-              backgroundColor: 'white', // Adding a background for better visibility
+              backgroundColor: 'white',
               borderRadius: 1,
             }}
           />
           <Box sx={{ width: { xs: '100%', md: '20%' } }}>
-          <Button
+            <Button
               variant="contained"
               sx={{
                 bgcolor: 'tertiary.main',
@@ -88,8 +88,9 @@ export default function MUIHero() {
                   bgcolor: 'secondary.main',
                   color: 'tertiary.main',
                 },
-                py: 2, // padding y-axis
-                px: 4, // padding x-axis
+                py: 2,
+                px: { xs: 0, md: 4 }, // Full width for small screens, padding for larger
+                width: '100%', // Full width for smaller screens
                 borderRadius: 1,
               }}
             >

@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation' 
+import { db } from "@/lib/firebase"; 
+import { doc, setDoc } from "firebase/firestore"; 
 
 export default function Signup() {
   const [error, setError] = useState('');
@@ -12,6 +14,17 @@ export default function Signup() {
   const passwordConfirmRef = useRef();
   const { signup,signInWithGoogle } = useAuth();
   const router = useRouter(); 
+
+  const initializeCart = async (userId) => {
+    try {
+      const cartDocRef = doc(db, "carts", userId); 
+      await setDoc(cartDocRef, { items: [] }); 
+      console.log("Cart initialized for user:", userId);
+    } catch (error) {
+      console.error("Error initializing cart:", error);
+    }
+  };
+
 
 
   async function handleSubmit(e) {
@@ -28,6 +41,8 @@ export default function Signup() {
       const user = userCredential.user;
       console.log(user);
 
+
+      await initializeCart(user.uid);
       router.push('/'); 
     } catch (err) {
       setError('Sorry! Failed to create an account');
@@ -51,6 +66,8 @@ export default function Signup() {
         displayName: user.displayName,
         photoURL: user.photoURL,
       };
+
+      await initializeCart(user.uid);
       router.push('/');
     } catch (err) {
       setError('Sorry! Failed to create an account');

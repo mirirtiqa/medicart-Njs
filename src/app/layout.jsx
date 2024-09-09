@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from '../theme';
 import { AuthProvider } from "@/contexts/AuthContexts";
+import { CartProvider } from "@/contexts/CardContext";
 import Header from "@/components/Header1/page";
 import MUIHeaderMenu from "@/components/Header/MUIHeaderMenu";
 export const metadata = {
@@ -22,11 +23,13 @@ export default function RootLayout({ children }) {
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <AuthProvider>
+                <CartProvider>
                 <div>
                   <Header />
                   <MUIHeaderMenu />
                   {children}
                 </div>
+                </CartProvider>
               </AuthProvider>
             </ThemeProvider>
           </StyledComponentsRegistry>

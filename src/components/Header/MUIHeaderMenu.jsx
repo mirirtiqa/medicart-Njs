@@ -1,6 +1,7 @@
 "use client";
 import Image from 'next/image';
 import { useState } from 'react';
+import { useCart } from '@/contexts/CardContext';
 import { AppBar, Toolbar, IconButton, Box, Button as MuiButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -11,11 +12,27 @@ import { useAuth } from '@/contexts/AuthContexts';
 import UserDetailsTooltip from '../UserDetailsTooltip';
 import Avatar from '@mui/material/Avatar';
 import { HeaderMenuOptions } from '@/constants/index';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid tertiary.main`,
+    padding: '0 4px',
+  },
+}));
 
 export default function MUIHeaderMenu() {
   const { currentUser, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const { cartItems} = useCart();
+  // const [count, setCount] = React.useState(cartItems);
+
+  const handleCartClick = () => {
+    router.push('/cart'); 
+  };
 
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
@@ -123,8 +140,13 @@ export default function MUIHeaderMenu() {
                 color: 'tertiary.main',
               },
             }}
+            onClick={handleCartClick}
+
           >
+            <StyledBadge badgeContent={cartItems.length} color="tertiary.main">
             <ShoppingCartIcon />
+            </StyledBadge>
+
           </IconButton>
         </Box>
       </Toolbar>

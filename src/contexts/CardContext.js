@@ -11,7 +11,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const { currentUser } = useAuth();
   
-  const cartCollectionRef = collection(db, 'carts');
+  const cartCollectionRef = collection(db, 'users');
   const user = currentUser
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const CartProvider = ({ children }) => {
     try {
       const cartDoc = await getDoc(doc(cartCollectionRef, userId));
       if (cartDoc.exists()) {
-        setCartItems(cartDoc.data().items || []);
+        setCartItems(cartDoc.data().itemsInCart || []);
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -33,9 +33,9 @@ export const CartProvider = ({ children }) => {
   };
 
   
-  const saveCart = async (userId, items) => {
+  const saveCart = async (userId, itemsInCart) => {
     try {
-      await setDoc(doc(cartCollectionRef, userId), { items });
+      await setDoc(doc(cartCollectionRef, userId), { itemsInCart });
     } catch (error) {
       console.error('Error saving cart:', error);
     }

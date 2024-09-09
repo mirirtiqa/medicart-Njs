@@ -17,8 +17,8 @@ export default function Signup() {
 
   const initializeCart = async (userId) => {
     try {
-      const cartDocRef = doc(db, "carts", userId); 
-      await setDoc(cartDocRef, { items: [] }); 
+      const cartDocRef = doc(db, "users", userId); 
+      await setDoc(cartDocRef, { itemsInCart: [] }); 
       console.log("Cart initialized for user:", userId);
     } catch (error) {
       console.error("Error initializing cart:", error);

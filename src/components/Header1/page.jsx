@@ -67,7 +67,7 @@ const Header = () => {
           >
             <AccessTimeIcon fontSize="small" sx={{ color: 'white' }} />
             <Typography sx={{ fontSize: { xs: 'auto', sm: 'body1' }, color: 'white' }}>
-              Open: Mon-Fri, 9:00 AM - 5:00 PM
+              Open: Mon-Sat, 9:00 AM - 6:0 PM
             </Typography>
           </Box>
         </Box>
@@ -127,7 +127,7 @@ const Header = () => {
           {/* "Get an Appointment" button */}
           <Button
             variant="contained"
-            href="#appointment"
+            href="/doctors"
             sx={{
               backgroundColor: '#01D6A3',
               color: 'white',

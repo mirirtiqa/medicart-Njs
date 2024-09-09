@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 const CardComponent = ({ title, imageSrc, link }) => {
     return (
         <Grid item xs={12} sm={6} md={4} lg={2}>
-            <a href={link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <a href={link} style={{ textDecoration: 'none' }}>
                 <Card style={{ transition: 'box-shadow 0.3s', cursor: 'pointer' }}
                     onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)'}
                     onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}>

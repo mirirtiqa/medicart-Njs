@@ -62,6 +62,7 @@ const CartPage = () => {
                   type="number"
                   value={item.quantity}
                   min="1"
+                  style={{ width: '80px', border:'1px solid black' }}
                   onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
                 />
                 <IconButton onClick={() => removeFromCart(item.id)}>

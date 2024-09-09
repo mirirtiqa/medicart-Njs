@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { medColRef } from '@/lib/firebase';
 
 
+
 const Container = styled.div`
   display: flex;
   padding: 20px;
@@ -44,6 +45,8 @@ const CategoryRow = styled.div`
 const StyledCard = styled(Card)`
   min-width: 300px;
   flex: 0 0 auto;
+  border: 1px solid black;
+  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
 `;
 
 const StyledCardMedia = styled(CardMedia)`
@@ -69,6 +72,7 @@ const CategoryBanner = styled.div`
 `;
 
 export default function MedicineCard() {
+  const { updateQuantity } = useCart();
   const [medicinesByCategory, setMedicinesByCategory] = useState({});
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
@@ -173,7 +177,18 @@ export default function MedicineCard() {
                       <Typography variant="subtitle2">
                         {'\u20B9'} {medicine.Price} MRP
                       </Typography>
-                      <Button size="small" onClick={() => addToCart(medicine)}>Add to Cart</Button>
+                {/* <input
+                  type="number"
+                  min="0"
+                  style={{ width: '80px', }}
+                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
+                /> */}
+
+                      <Button size="small" sx={{
+              backgroundColor: 'tertiary.main',
+              color: 'white',
+              '&:hover': { bgcolor: 'white', color: 'tertiary.main' }
+            }} onClick={() => addToCart(medicine)}>Add to Cart</Button>
                     </CardActions>
                   </StyledCard>
                 ))}

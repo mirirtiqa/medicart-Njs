@@ -86,7 +86,17 @@ const Account = () => {
             <Box sx ={{paddingRight:'15px',display:'flex',flexDirection:'column'}}> 
             <Typography variant="body2">Address {index + 1}</Typography>
             <Typography variant="caption" color="textSecondary">
-                {address}
+                {`
+                  ${address.fullName}, 
+                  ${address.mobileNumber},
+                  ${address.flat}, 
+                  ${address.area}, 
+                  ${address.landmark}, 
+                  ${address.city}, 
+                  ${address.state}, 
+                 ${address.pincode},
+                  ${address.country}, 
+                `}
             </Typography>
             <Typography variant="caption" color="tertiary.main">
             <Link href="#">Edit</Link>

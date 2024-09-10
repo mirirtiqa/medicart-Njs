@@ -23,7 +23,6 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
     landmark: '',
     city: '',
     state: '',
-    isDefault: false,
   });
 
   const handleChange = (e) => {
@@ -44,10 +43,9 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
       Area: ${formData.area}, 
       Landmark: ${formData.landmark}, 
       City: ${formData.city}, 
-      State: ${formData.state}, 
-      Default: ${formData.isDefault ? 'Yes' : 'No'}
+      State: ${formData.state}
     `;
-    addToAddresses(addressString);
+    addToAddresses(formData);
     onClose();
   };
 
@@ -158,18 +156,6 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               <MenuItem value="Maharashtra">Maharashtra</MenuItem>
               {/* Add more states as needed */}
             </Select>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.isDefault}
-                  onChange={handleChange}
-                  name="isDefault"
-                />
-              }
-              label="Make this my default address"
-            />
           </Grid>
         </Grid>
       </DialogContent>

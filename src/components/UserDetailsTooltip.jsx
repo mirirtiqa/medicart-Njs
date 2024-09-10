@@ -33,8 +33,9 @@ export default function UserDetailsTooltip({ children }) {
   const confirmLogout = async () => {
     setOpenDialog(false); // Close dialog
     await logout(); // Perform logout
+    window.location.reload(); 
     router.push('/'); // Redirect to home page
-    window.location.reload(); // Refresh the page
+    
   };
 
   const cancelLogout = () => {
@@ -84,6 +85,13 @@ export default function UserDetailsTooltip({ children }) {
               onClick={() => router.push('/appointments')}
             >
               My Appointments
+            </Typography>
+            <Typography
+              style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+              variant="body2"
+              onClick={() => router.push('/myaccount')}
+            >
+              My Account
             </Typography>
             <Button
               fullWidth

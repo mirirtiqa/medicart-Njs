@@ -15,10 +15,10 @@ export default function Signup() {
   const { signup,signInWithGoogle } = useAuth();
   const router = useRouter(); 
 
-  const initializeCart = async (userId) => {
+  const initializeUser = async (userId) => {
     try {
       const cartDocRef = doc(db, "users", userId); 
-      await setDoc(cartDocRef, { itemsInCart: [] }); 
+      await setDoc(cartDocRef, { itemsInCart: [],addresses:[] }); 
       console.log("Cart initialized for user:", userId);
     } catch (error) {
       console.error("Error initializing cart:", error);
@@ -42,7 +42,7 @@ export default function Signup() {
       console.log(user);
 
 
-      await initializeCart(user.uid);
+      await initializeUser(user.uid);
       router.push('/'); 
     } catch (err) {
       setError('Sorry! Failed to create an account');
@@ -67,7 +67,7 @@ export default function Signup() {
         photoURL: user.photoURL,
       };
 
-      await initializeCart(user.uid);
+      await initializeUser(user.uid);
       router.push('/');
     } catch (err) {
       setError('Sorry! Failed to create an account');

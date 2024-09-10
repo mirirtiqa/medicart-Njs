@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import SpecialOffer from "@/components/OffersAndTrending/SpecialOffer";
 const handleClick1 = () => {
-    window.open('https://example.com/cancer-care', '_blank', 'noopener,noreferrer');
+    window.open('/cancer-care');
 };
 const handleClick2 = () => {
-    window.open('https://example.com/cancer-care', '_blank', 'noopener,noreferrer');
+    window.open('/newMedical');
 };
 const OffersAndTrending = () => {
     const trendingProducts = [

@@ -19,6 +19,7 @@
     "@mui/material": "^6.0.0",
     "@mui/material-nextjs": "^6.0.0",
     "@mui/x-date-pickers": "^7.16.0",
+    "@shadcn/ui": "^0.0.4",
     "antd": "^5.20.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

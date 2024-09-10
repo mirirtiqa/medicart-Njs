@@ -37,7 +37,7 @@ const CardComponent = ({ title, imageSrc, link }) => {
 const CardGrid = () => {
     const cards = [
         { title: 'Medicines', imageSrc: '/images/medicines.png', link: '/medicines' },
-        { title: 'Lab Tests', imageSrc: '/images/lab-tests.png', link: '/lab-tests' },
+        { title: 'Lab Tests', imageSrc: '/images/lab-tests.png', link: '/lab' },
         { title: 'Doctors', imageSrc: '/images/doctors.png', link: '/doctors' },
         { title: 'Cancer Care', imageSrc: '/images/cancer-care.png', link: '/cancer-care' },
         { title: 'Care Plans', imageSrc: '/images/care-plans.png', link: '/care-plans' },

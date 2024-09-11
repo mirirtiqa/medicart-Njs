@@ -134,7 +134,7 @@ export default function Login() {
                 fullWidth
                 name="doctor-code"
                 label="Doctor's Code"
-                type="text"
+                type="password" // Asterisked input
                 id="doctor-code"
                 inputRef={doctorCodeRef}
               />
@@ -152,16 +152,20 @@ export default function Login() {
             </Button>
           </Box>
         </CardContent>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
-          >
-            Login with Google
-          </Button>
-        </Box>
+
+        {!isDoctorLogin && (
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="outlined"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
+            >
+              Login with Google
+            </Button>
+          </Box>
+        )}
+
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
           {isDoctorLogin ? (
             <>
@@ -173,6 +177,7 @@ export default function Login() {
             </>
           )}
         </Typography>
+
         {isDoctorLogin && (
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
             <Button onClick={() => setIsDoctorLogin(false)} variant="text">Login as User</Button>

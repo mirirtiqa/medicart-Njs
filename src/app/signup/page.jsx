@@ -42,7 +42,6 @@ export default function Signup() {
       setLoading(true);
       const userCredential = await signup(emailRef.current.value, passwordRef.current.value);
       const user = userCredential.user;
-      console.log(user);
 
       // Differentiate between user and doctor signups
       if (isDoctorSignup) {
@@ -62,6 +61,7 @@ export default function Signup() {
     setLoading(false);
   };
 
+  // Google Sign-in handler
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
@@ -69,7 +69,6 @@ export default function Signup() {
     try {
       const result = await signInWithGoogle();
       const user = result.user;
-      console.log(user);
 
       if (isDoctorSignup) {
         // Save doctor's code to Firestore
@@ -142,7 +141,7 @@ export default function Signup() {
                 fullWidth
                 name="doctor-code"
                 label="Doctor's Code"
-                type="text"
+                type="password" // Asterisked input
                 id="doctor-code"
                 inputRef={doctorCodeRef}
               />
@@ -159,16 +158,18 @@ export default function Signup() {
             </Button>
           </Box>
 
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
-            >
-              Sign up with Google
-            </Button>
-          </Box>
+          {!isDoctorSignup && (
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
+              >
+                Sign up with Google
+              </Button>
+            </Box>
+          )}
 
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
             {isDoctorSignup ? (

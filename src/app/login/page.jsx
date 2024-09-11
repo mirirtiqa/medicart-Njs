@@ -1,64 +1,103 @@
 "use client";
 import React, { useState, useRef } from 'react';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container } from '@mui/material';
-import { useAuth } from '@/contexts/AuthContexts'; 
-import { useRouter } from 'next/navigation'; 
+import { useAuth } from '@/contexts/AuthContexts';
+import { useRouter } from 'next/navigation';
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); 
+  const [isDoctorLogin, setIsDoctorLogin] = useState(false); // State to toggle between user and doctor login
+
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login,signInWithGoogle  } = useAuth();
+  const doctorCodeRef = useRef(); // Ref for Doctor's code
 
+  const { login, signInWithGoogle } = useAuth();
+  const router = useRouter();
+
+  const verifyDoctorCode = async (userId, doctorCode) => {
+    try {
+      const doctorDocRef = doc(db, "doctors", userId);
+      const doctorDoc = await getDoc(doctorDocRef);
+
+      if (doctorDoc.exists()) {
+        const data = doctorDoc.data();
+        return data.code === doctorCode;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error verifying doctor's code:", error);
+      return false;
+    }
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
     try {
       setError('');
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      router.push('/'); 
+
+      const userCredential = await login(emailRef.current.value, passwordRef.current.value);
+      const user = userCredential.user;
+
+      if (isDoctorLogin) {
+        // Verify doctor's code
+        const isCodeValid = await verifyDoctorCode(user.uid, doctorCodeRef.current.value);
+        
+        if (!isCodeValid) {
+          setError('Invalid Doctor\'s Code');
+          setLoading(false);
+          return;
+        }
+      }
+
+      router.push('/');
     } catch (err) {
-      setError('Sorry! Failed to log In');
+      setError('Sorry! Failed to log in');
       console.error(err.message);
     }
     setLoading(false);
   }
 
   async function handleGoogleSignIn() {
-    setError('');  
-    setLoading(true);  
+    setError('');
+    setLoading(true);
 
     try {
-      setError('');
-      setLoading(true);
       const result = await signInWithGoogle();
       const user = result.user;
-      console.log(user);
-      const userDetails = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      };
+      
+      if (isDoctorLogin) {
+        // Verify doctor's code
+        const isCodeValid = await verifyDoctorCode(user.uid, doctorCodeRef.current.value);
+
+        if (!isCodeValid) {
+          setError('Invalid Doctor\'s Code');
+          setLoading(false);
+          return;
+        }
+      }
+
       router.push('/');
     } catch (err) {
       setError('Sorry, failed to Login!');
       console.error(err.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   }
 
   return (
     <Container component="main" maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Card sx={{ width: '100%', maxWidth: 400, color:"tertiary.main"}}>
+      <Card sx={{ width: '100%', maxWidth: 400, color: "tertiary.main" }}>
         <CardContent>
           <Typography variant="h5" component="h2" align="center" gutterBottom>
-            Login
+            {isDoctorLogin ? 'Doctor Login' : 'Login'}
           </Typography>
 
           {error && <Alert severity="error">{error}</Alert>}
@@ -88,31 +127,57 @@ export default function Login() {
               inputRef={passwordRef}
             />
 
+            {isDoctorLogin && (
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="doctor-code"
+                label="Doctor's Code"
+                type="text"
+                id="doctor-code"
+                inputRef={doctorCodeRef}
+              />
+            )}
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               disabled={loading}
-              sx={{ mt: 2, mb: 2 ,backgroundColor:'tertiary.main',color:'secondary.main' }}
+              sx={{ mt: 2, mb: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
             >
               Submit
             </Button>
           </Box>
         </CardContent>
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-            <Button 
-              variant="outlined" 
-              onClick={handleGoogleSignIn} 
-              disabled={loading}
-              sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
-            >
-              Login with Google
-            </Button>
-          </Box>
+          <Button
+            variant="outlined"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
+          >
+            Login with Google
+          </Button>
+        </Box>
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Need an account? <Button href="/signup" variant="text">Sign Up</Button> 
+          {isDoctorLogin ? (
+            <>
+              Need an account? <Button href="/signup" variant="text">Sign Up</Button>
+            </>
+          ) : (
+            <>
+              Are you a doctor? <Button onClick={() => setIsDoctorLogin(true)} variant="text">Login as Doctor</Button>
+            </>
+          )}
         </Typography>
+        {isDoctorLogin && (
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            <Button onClick={() => setIsDoctorLogin(false)} variant="text">Login as User</Button>
+          </Typography>
+        )}
       </Card>
     </Container>
   );

@@ -2,32 +2,35 @@
 import React, { useState, useRef } from 'react';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContexts';
-import { useRouter } from 'next/navigation' 
-import { db } from "@/lib/firebase"; 
-import { doc, setDoc } from "firebase/firestore"; 
+import { useRouter } from 'next/navigation';
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isDoctorSignup, setIsDoctorSignup] = useState(false); // State to toggle between user and doctor signup
+
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup,signInWithGoogle } = useAuth();
-  const router = useRouter(); 
+  const doctorCodeRef = useRef(); // Ref for Doctor's code
 
+  const { signup, signInWithGoogle } = useAuth();
+  const router = useRouter();
+
+  // Initialize user function for regular users
   const initializeUser = async (userId) => {
     try {
-      const cartDocRef = doc(db, "users", userId); 
-      await setDoc(cartDocRef, { itemsInCart: [],addresses:[] }); 
-      console.log("Cart initialized for user:", userId);
+      const userDocRef = doc(db, "users", userId);
+      await setDoc(userDocRef, { itemsInCart: [], addresses: [] });
+      console.log("User profile initialized for:", userId);
     } catch (error) {
-      console.error("Error initializing cart:", error);
+      console.error("Error initializing user profile:", error);
     }
   };
 
-
-
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -41,49 +44,57 @@ export default function Signup() {
       const user = userCredential.user;
       console.log(user);
 
+      // Differentiate between user and doctor signups
+      if (isDoctorSignup) {
+        // Save doctor's code to Firestore
+        const doctorDocRef = doc(db, "doctors", user.uid);
+        await setDoc(doctorDocRef, { code: doctorCodeRef.current.value });
+        console.log("Doctor's details saved:", user.uid);
+      } else {
+        await initializeUser(user.uid); // Initialize user profile for regular users
+      }
 
-      await initializeUser(user.uid);
-      router.push('/'); 
-    } catch (err) {
-      setError('Sorry! Failed to create an account');
-      console.error(err.message);
-    }
-    setLoading(false);
-  }
-  async function handleGoogleSignIn() {
-    setError('');  
-    setLoading(true);  
-
-    try {
-      setError('');
-      setLoading(true);
-      const result = await signInWithGoogle();
-      const user = result.user;
-      console.log(user);
-      const userDetails = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      };
-
-      await initializeUser(user.uid);
       router.push('/');
     } catch (err) {
       setError('Sorry! Failed to create an account');
       console.error(err.message);
     }
-    finally {
+    setLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user;
+      console.log(user);
+
+      if (isDoctorSignup) {
+        // Save doctor's code to Firestore
+        const doctorDocRef = doc(db, "doctors", user.uid);
+        await setDoc(doctorDocRef, { code: doctorCodeRef.current.value });
+        console.log("Doctor's details saved:", user.uid);
+      } else {
+        await initializeUser(user.uid); // Initialize user profile for regular users
+      }
+
+      router.push('/');
+    } catch (err) {
+      setError('Sorry! Failed to create an account');
+      console.error(err.message);
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <Container component="main" maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Card sx={{ width: '100%', maxWidth: 400, color:"tertiary.main" }}>
+      <Card sx={{ width: '100%', maxWidth: 400, color: "tertiary.main" }}>
         <CardContent>
           <Typography variant="h5" component="h2" align="center" gutterBottom>
-            Sign Up
+            {isDoctorSignup ? 'Doctor Sign Up' : 'Sign Up'}
           </Typography>
 
           {error && <Alert severity="error">{error}</Alert>}
@@ -124,33 +135,59 @@ export default function Signup() {
               inputRef={passwordConfirmRef}
             />
 
+            {isDoctorSignup && (
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="doctor-code"
+                label="Doctor's Code"
+                type="text"
+                id="doctor-code"
+                inputRef={doctorCodeRef}
+              />
+            )}
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               disabled={loading}
-              sx={{ mt: 2, mb: 2,backgroundColor:'tertiary.main',color:'secondary.main'}}
+              sx={{ mt: 2, mb: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
             >
               Submit
             </Button>
           </Box>
-        </CardContent>
-        {/* <Typography variant="body2" align="center" sx={{ mt: 2, mb: 2,ml:2,mr:2,  border:'1px solid black',padding: 1,  }}>
-           <Button href="/login" variant="text" onClick={handleGoogleSignIn}>Sign up with Google</Button> 
-        </Typography> */}
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-            <Button 
-              variant="outlined" 
-              onClick={handleGoogleSignIn} 
+
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="outlined"
+              onClick={handleGoogleSignIn}
               disabled={loading}
               sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
             >
               Sign up with Google
             </Button>
           </Box>
-        <Typography variant="body2" align="center" sx={{ mt: 2, }}>
-          Already have an account? <Button href="/login" variant="text">Log In</Button> 
-        </Typography>
+
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            {isDoctorSignup ? (
+              <>
+                Already have an account? <Button href="/login" variant="text">Log In</Button>
+              </>
+            ) : (
+              <>
+                Are you a doctor? <Button onClick={() => setIsDoctorSignup(true)} variant="text">Sign Up as Doctor</Button>
+              </>
+            )}
+          </Typography>
+
+          {isDoctorSignup && (
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+              <Button onClick={() => setIsDoctorSignup(false)} variant="text">Sign Up as User</Button>
+            </Typography>
+          )}
+        </CardContent>
       </Card>
     </Container>
   );

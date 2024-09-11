@@ -174,10 +174,13 @@ export default function MedicineCard() {
                         {medicine.Description}
                       </StyledTypography>
                     </CardContent>
-                    <CardActions>
-                      <Typography variant="subtitle2">
+                    <CardActions sx={{display:"flex",flexDirection:"column",alignItems:"start",gap:'2px'}}>
+                      <div>
+                      <Typography variant="subtitle2" sx={{marginLeft:'3px',fontSize:'1rem'}}>
                         {'\u20B9'} {medicine.Price} MRP
                       </Typography>
+                      </div>
+                      <div>
                       {showCounter && (
 
   (() => {
@@ -198,6 +201,8 @@ export default function MedicineCard() {
                       <Button size="small" sx={{
               backgroundColor: 'tertiary.main',
               color: 'white',
+              marginTop:'3px',
+              width: '100%',
               '&:hover': { bgcolor: 'white', color: 'tertiary.main' }
             }} onClick={() => {
               addToCart(medicine);
@@ -206,6 +211,7 @@ export default function MedicineCard() {
               }
               console.log("item added")
             }}>Add to Cart</Button>
+                    </div>
                     </CardActions>
                   </StyledCard>
                 ))}

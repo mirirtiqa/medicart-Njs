@@ -67,7 +67,7 @@ const Header = () => {
           >
             <AccessTimeIcon fontSize="small" sx={{ color: 'white' }} />
             <Typography sx={{ fontSize: { xs: 'auto', sm: 'body1' }, color: 'white' }}>
-              Open: Mon-Sat, 9:00 AM - 6:0 PM
+              Open: Mon-Sat, 9:00 AM - 6:00 PM
             </Typography>
           </Box>
         </Box>

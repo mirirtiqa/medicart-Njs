@@ -4,6 +4,7 @@ import { Button, Typography, IconButton,Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation' 
+import Counter from '@/components/Counter';
 const CartContainer = styled.div`
   padding: 20px;
   max-width: 800px;
@@ -68,18 +69,15 @@ const CartPage = () => {
                   {'\u20B9'} {item.Price} x {item.quantity}
                 </Typography>
               </ItemDetails>
-              <QuantityControls>
-                <input
-                  type="number"
-                  value={item.quantity}
-                  min="1"
-                  style={{ width: '80px', border:'1px solid black' }}
-                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
-                />
+              
+                <Counter item = {item}
+                    updateQuantity={updateQuantity}
+                    removeFromCart ={removeFromCart} 
+                  />
                 <IconButton onClick={() => removeFromCart(item.id)}>
                   <DeleteIcon />
                 </IconButton>
-              </QuantityControls>
+              
             </CartItem>
           ))}
           <Typography variant="h6">Total :  {'\u20B9'} {totalPrice.toFixed(2)}</Typography>

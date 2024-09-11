@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react';
 import { getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
 import { medColRef } from '@/lib/firebase';
+import Counter from '@/components/Counter';
+
 
 
 
@@ -72,14 +74,13 @@ const CategoryBanner = styled.div`
 `;
 
 export default function MedicineCard() {
-  const { updateQuantity } = useCart();
+  const [showCounter, setShowCounter] = useState(false);
   const [medicinesByCategory, setMedicinesByCategory] = useState({});
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { addToCart } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, clearCart,addToCart } = useCart();
 
-  // Fetch medicines and group by category
   const fetchAllMedicines = async () => {
     setLoading(true);
     try {
@@ -173,22 +174,38 @@ export default function MedicineCard() {
                         {medicine.Description}
                       </StyledTypography>
                     </CardContent>
-                    <CardActions sx={{ gap: 15 }}>
+                    <CardActions>
                       <Typography variant="subtitle2">
                         {'\u20B9'} {medicine.Price} MRP
                       </Typography>
-                {/* <input
-                  type="number"
-                  min="0"
-                  style={{ width: '80px', }}
-                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
-                /> */}
+                      {showCounter && (
+
+  (() => {
+    const i = cartItems.find((item) => item.id === medicine.id);
+    
+    
+    return i ? (
+      <Counter 
+        item={i}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart} 
+      />
+    ) : null; 
+  })()
+)}
+
 
                       <Button size="small" sx={{
               backgroundColor: 'tertiary.main',
               color: 'white',
               '&:hover': { bgcolor: 'white', color: 'tertiary.main' }
-            }} onClick={() => addToCart(medicine)}>Add to Cart</Button>
+            }} onClick={() => {
+              addToCart(medicine);
+              if (!showCounter) {
+                setShowCounter(true); 
+              }
+              console.log("item added")
+            }}>Add to Cart</Button>
                     </CardActions>
                   </StyledCard>
                 ))}

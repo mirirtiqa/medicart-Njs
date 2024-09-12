@@ -51,7 +51,6 @@ export default function UserDetailsTooltip({ children }) {
   const confirmLogout = async () => {
     setOpenDialog(false); // Close dialog
     await logout(); // Perform logout
-    window.location.reload(); 
     router.push('/'); // Redirect to home page
   };
 

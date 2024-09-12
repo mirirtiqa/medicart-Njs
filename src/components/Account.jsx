@@ -121,14 +121,14 @@ const Account = () => {
             </Typography>
             {isDoctor ? (
               <TextField
-                fullWidth
-                label="Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                variant="outlined"
-                sx={{ marginBottom: '1rem' }}
-              />
+              fullWidth
+              label="Name"
+              name="name"
+              value={formData.name.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
+              variant="outlined"
+              sx={{ marginBottom: '1rem' }}
+            />
             ) : (
               <Typography variant="body2">{userDetails?.displayName || ""}</Typography>
             )}

@@ -72,8 +72,8 @@ export default function DoctorsPage() {
       }));
 
       // Filter doctors with complete profiles
-      const filteredResults = results.filter(doctor => 
-        doctor.name && 
+      const filteredResults = results.filter(doctor =>
+        doctor.name &&
         doctor.specialization &&
         doctor.experience &&
         doctor.fees
@@ -99,12 +99,12 @@ export default function DoctorsPage() {
 
   const handleDateChange = (doctorId, newDate) => {
     const selectedDate = new Date(newDate); // Convert string to Date object
-    
+
     if (selectedDate.getDay() === 0) { // Check if it's Sunday
       alert("Clinic is not functional on a Sunday");
       return; // Prevent selection
     }
-  
+
     setSelectedDates(prevState => ({
       ...prevState,
       [doctorId]: {
@@ -163,7 +163,7 @@ export default function DoctorsPage() {
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'flex-start',  // Distribute space evenly between cards
-        gap: '5rem',                      // Space between the cards (optional for small gaps)
+        gap: '4rem',                      // Space between the cards (optional for small gaps)
         padding: '3rem'
       }}>
         {filteredDoctors.length === 0 ? (
@@ -183,7 +183,7 @@ export default function DoctorsPage() {
             >
               <CardContent>
                 <Typography variant="h5" component="div" fontWeight={'500'} sx={{ padding: '0.5rem' }}>
-                  {doctor.name}
+                  {doctor.name.startsWith('Dr. ') ? doctor.name : `Dr. ${doctor.name}`}
                 </Typography>
                 <Typography sx={{ padding: '0.5rem' }}>
                   Specialization: {doctor.specialization}

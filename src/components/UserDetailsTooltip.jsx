@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import { Box, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -23,8 +25,24 @@ export default function UserDetailsTooltip({ children }) {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
   
-  // State for controlling the dialog
   const [openDialog, setOpenDialog] = React.useState(false);
+  const [isDoctor, setIsDoctor] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkDoctorStatus = async () => {
+      if (currentUser) {
+        const doctorDocRef = doc(db, "doctors", currentUser.uid);
+        const doctorDoc = await getDoc(doctorDocRef);
+        if (doctorDoc.exists()) {
+          setIsDoctor(true);
+        } else {
+          setIsDoctor(false);
+        }
+      }
+    };
+
+    checkDoctorStatus();
+  }, [currentUser]);
 
   const handleLogout = () => {
     setOpenDialog(true); // Open confirmation dialog
@@ -35,14 +53,12 @@ export default function UserDetailsTooltip({ children }) {
     await logout(); // Perform logout
     window.location.reload(); 
     router.push('/'); // Redirect to home page
-    
   };
 
   const cancelLogout = () => {
     setOpenDialog(false); // Close dialog
   };
 
-  // Define userDetails using currentUser
   const userDetails = currentUser
     ? {
         email: currentUser.email || "",
@@ -72,27 +88,58 @@ export default function UserDetailsTooltip({ children }) {
               </Box>
             </Box>
             <Divider sx={{ my: 1 }} />
-            <Typography
-              style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
-              variant="body2"
-              onClick={() => router.push('/orders')}
-            >
-              My Orders
-            </Typography>
-            <Typography
-              style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
-              variant="body2"
-              onClick={() => router.push('/appointments')}
-            >
-              My Appointments
-            </Typography>
-            <Typography
-              style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
-              variant="body2"
-              onClick={() => router.push('/myaccount')}
-            >
-              My Account
-            </Typography>
+            
+            {/* Render different options based on whether the user is a doctor */}
+            {isDoctor ? (
+              <>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/orders')}
+                >
+                  My Orders
+                </Typography>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/appointment-requests')}
+                >
+                  Appointment Requests
+                </Typography>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/myaccount')}
+                >
+                  Account Settings
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/orders')}
+                >
+                  My Orders
+                </Typography>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/appointments')}
+                >
+                  My Appointments
+                </Typography>
+                <Typography
+                  style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
+                  variant="body2"
+                  onClick={() => router.push('/myaccount')}
+                >
+                  My Account
+                </Typography>
+              </>
+            )}
+
             <Button
               fullWidth
               style={{ marginTop: 8, backgroundColor: '#01D6A3', color: 'white' }}
@@ -107,10 +154,7 @@ export default function UserDetailsTooltip({ children }) {
       </HtmlTooltip>
 
       {/* Confirmation Dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={cancelLogout}
-      >
+      <Dialog open={openDialog} onClose={cancelLogout}>
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
           <Typography>Are you sure you want to logout?</Typography>

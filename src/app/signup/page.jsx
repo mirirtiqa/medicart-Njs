@@ -4,7 +4,7 @@ import { Box, Button, Card, CardContent, TextField, Typography, Alert, Container
 import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation';
 import { db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection, query, where } from "firebase/firestore";
 
 export default function Signup() {
   const [error, setError] = useState('');
@@ -30,6 +30,16 @@ export default function Signup() {
     }
   };
 
+  // Function to check if doctor's code is unique
+  const isDoctorCodeUnique = async (code) => {
+    const doctorQuery = query(collection(db, "doctors"), where("code", "==", code));
+    const querySnapshot = await getDocs(doctorQuery);
+    return querySnapshot.empty;
+  };
+
+  // Validation for alphanumeric code
+  const isValidAlphanumeric = (code) => /^[a-zA-Z0-9]{8}$/.test(code);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,9 +55,22 @@ export default function Signup() {
 
       // Differentiate between user and doctor signups
       if (isDoctorSignup) {
+        const doctorCode = doctorCodeRef.current.value;
+
+        // Check if the code is valid and alphanumeric
+        if (!isValidAlphanumeric(doctorCode)) {
+          throw new Error('Doctor code must be exactly 8 alphanumeric characters.');
+        }
+
+        // Check if the code is unique
+        const isUnique = await isDoctorCodeUnique(doctorCode);
+        if (!isUnique) {
+          throw new Error('This doctor code is already in use. Please choose a different code.');
+        }
+
         // Save doctor's code to Firestore
         const doctorDocRef = doc(db, "doctors", user.uid);
-        await setDoc(doctorDocRef, { code: doctorCodeRef.current.value });
+        await setDoc(doctorDocRef, { code: doctorCode });
         console.log("Doctor's details saved:", user.uid);
       } else {
         await initializeUser(user.uid); // Initialize user profile for regular users
@@ -55,10 +78,11 @@ export default function Signup() {
 
       router.push('/');
     } catch (err) {
-      setError('Sorry! Failed to create an account');
+      setError(err.message || 'Sorry! Failed to create an account');
       console.error(err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Google Sign-in handler
@@ -71,17 +95,27 @@ export default function Signup() {
       const user = result.user;
 
       if (isDoctorSignup) {
-        // Save doctor's code to Firestore
+        const doctorCode = doctorCodeRef.current.value;
+
+        if (!isValidAlphanumeric(doctorCode)) {
+          throw new Error('Doctor code must be exactly 8 alphanumeric characters.');
+        }
+
+        const isUnique = await isDoctorCodeUnique(doctorCode);
+        if (!isUnique) {
+          throw new Error('This doctor code is already in use. Please choose a different code.');
+        }
+
         const doctorDocRef = doc(db, "doctors", user.uid);
-        await setDoc(doctorDocRef, { code: doctorCodeRef.current.value });
+        await setDoc(doctorDocRef, { code: doctorCode });
         console.log("Doctor's details saved:", user.uid);
       } else {
-        await initializeUser(user.uid); // Initialize user profile for regular users
+        await initializeUser(user.uid);
       }
 
       router.push('/');
     } catch (err) {
-      setError('Sorry! Failed to create an account');
+      setError(err.message || 'Sorry! Failed to create an account');
       console.error(err.message);
     } finally {
       setLoading(false);
@@ -140,8 +174,8 @@ export default function Signup() {
                 required
                 fullWidth
                 name="doctor-code"
-                label="Doctor's Code"
-                type="password" // Asterisked input
+                label="Doctor's Code (8 alphanumeric characters)"
+                type="password"
                 id="doctor-code"
                 inputRef={doctorCodeRef}
               />

@@ -18,6 +18,10 @@ export default function Login() {
   const { login, signInWithGoogle } = useAuth();
   const router = useRouter();
 
+  // Check if doctor's code is alphanumeric and 8 characters long
+  const isValidAlphanumeric = (code) => /^[a-zA-Z0-9]{8}$/.test(code);
+
+  // Verify the doctor's code from Firestore
   const verifyDoctorCode = async (userId, doctorCode) => {
     try {
       const doctorDocRef = doc(db, "doctors", userId);
@@ -46,8 +50,15 @@ export default function Login() {
       const user = userCredential.user;
 
       if (isDoctorLogin) {
+        const doctorCode = doctorCodeRef.current.value;
+
+        // Validate that doctor's code is alphanumeric and 8 characters long
+        if (!isValidAlphanumeric(doctorCode)) {
+          throw new Error('Doctor code must be exactly 8 alphanumeric characters.');
+        }
+
         // Verify doctor's code
-        const isCodeValid = await verifyDoctorCode(user.uid, doctorCodeRef.current.value);
+        const isCodeValid = await verifyDoctorCode(user.uid, doctorCode);
         
         if (!isCodeValid) {
           setError('Invalid Doctor\'s Code');
@@ -73,8 +84,15 @@ export default function Login() {
       const user = result.user;
       
       if (isDoctorLogin) {
+        const doctorCode = doctorCodeRef.current.value;
+
+        // Validate doctor's code
+        if (!isValidAlphanumeric(doctorCode)) {
+          throw new Error('Doctor code must be exactly 8 alphanumeric characters.');
+        }
+
         // Verify doctor's code
-        const isCodeValid = await verifyDoctorCode(user.uid, doctorCodeRef.current.value);
+        const isCodeValid = await verifyDoctorCode(user.uid, doctorCode);
 
         if (!isCodeValid) {
           setError('Invalid Doctor\'s Code');
@@ -133,8 +151,8 @@ export default function Login() {
                 required
                 fullWidth
                 name="doctor-code"
-                label="Doctor's Code"
-                type="password" // Asterisked input
+                label="Doctor's Code (8 alphanumeric characters)"
+                type="password"
                 id="doctor-code"
                 inputRef={doctorCodeRef}
               />

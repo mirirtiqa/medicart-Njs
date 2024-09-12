@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Paper, Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Container, Typography, Paper, Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
+import { Edit as EditIcon } from '@mui/icons-material';
 import styled from 'styled-components';
 import { useAuth } from '@/contexts/AuthContexts';
 import { useCart } from '@/contexts/CardContext';
@@ -25,12 +26,15 @@ const InfoRow = styled(Box)`
 
 const Account = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false); // Separate state for edit dialog
   const [isDoctor, setIsDoctor] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [popupOpen, setPopupOpen] = useState(false); // State for pop-up
-  const [popupMessage, setPopupMessage] = useState(''); // Message for pop-up
-  
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [editField, setEditField] = useState(null);
+  const [editValue, setEditValue] = useState('');
+
   const { currentUser, logout } = useAuth();
   const { addresses, addToAddresses } = useCart();
   
@@ -77,6 +81,14 @@ const Account = () => {
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
 
+  const handleOpenEditDialog = (field) => {
+    setEditField(field);
+    setEditValue(userDetails[field] || '');
+    setEditDialogOpen(true); // Open edit dialog
+  };
+
+  const handleCloseEditDialog = () => setEditDialogOpen(false);
+
   const handleAddAddress = (address) => {
     addToAddresses(address);
   };
@@ -90,16 +102,35 @@ const Account = () => {
       const doctorDocRef = doc(db, 'doctors', currentUser.uid);
       await setDoc(doctorDocRef, { ...formData }, { merge: true });
       setPopupMessage('Doctor details updated successfully');
-      setPopupOpen(true); // Open success pop-up
+      setPopupOpen(true);
     } catch (error) {
       console.error('Error updating doctor details:', error);
       setPopupMessage('Failed to update doctor details');
-      setPopupOpen(true); // Open error pop-up
+      setPopupOpen(true);
     }
   };
 
   const handlePopupClose = () => {
     setPopupOpen(false);
+  };
+
+  // Handle saving the updated value
+  const handleSaveEdit = async () => {
+    const userDocRef = doc(db, 'users', currentUser.uid);
+    try {
+      await setDoc(userDocRef, { [editField]: editValue }, { merge: true });
+      setPopupMessage(`${editField.charAt(0).toUpperCase() + editField.slice(1)} updated successfully`);
+      setPopupOpen(true);
+      setEditDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      setPopupMessage('Failed to update user details');
+      setPopupOpen(true);
+    }
+  };
+
+  const handleEditValueChange = (e) => {
+    setEditValue(e.target.value);
   };
 
   if (loading) {
@@ -121,16 +152,21 @@ const Account = () => {
             </Typography>
             {isDoctor ? (
               <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
-              variant="outlined"
-              sx={{ marginBottom: '1rem' }}
-            />
+                fullWidth
+                label="Name"
+                name="name"
+                value={formData.name.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
+                variant="outlined"
+                sx={{ marginBottom: '1rem' }}
+              />
             ) : (
-              <Typography variant="body2">{userDetails?.displayName || ""}</Typography>
+              <Box display="flex" alignItems="center">
+                <Typography variant="body2">{userDetails?.displayName || ""}</Typography>
+                <IconButton onClick={() => handleOpenEditDialog('displayName')} sx={{ marginLeft: '1rem' }}>
+                  <EditIcon />
+                </IconButton>
+              </Box>
             )}
           </Box>
         </InfoRow>
@@ -141,7 +177,14 @@ const Account = () => {
             <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
               Email
             </Typography>
-            <Typography variant="body2">{userDetails?.email || ""}</Typography>
+            <Box display="flex" alignItems="center">
+              <Typography variant="body2">{userDetails?.email || ""}</Typography>
+              {!isDoctor && (
+                <IconButton onClick={() => handleOpenEditDialog('email')} sx={{ marginLeft: '1rem' }}>
+                  <EditIcon />
+                </IconButton>
+              )}
+            </Box>
           </Box>
         </InfoRow>
 
@@ -254,6 +297,26 @@ const Account = () => {
         <DialogActions>
           <Button onClick={handlePopupClose} autoFocus>
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for editing user details */}
+      <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
+        <DialogTitle>Edit {editField === 'displayName' ? 'Name' : 'Email'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label={editField === 'displayName' ? 'Name' : 'Email'}
+            value={editValue}
+            onChange={handleEditValueChange}
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditDialog}>Cancel</Button>
+          <Button onClick={handleSaveEdit} variant="contained">
+            Save
           </Button>
         </DialogActions>
       </Dialog>

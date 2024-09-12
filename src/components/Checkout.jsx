@@ -1,12 +1,21 @@
 "use client";
-// pages/checkout.js
+
 import { useState } from 'react';
 import { Stepper, Step, StepLabel, Button, Box, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import AddressSelector from './AddressSelector';
 
 const steps = ['Select Address', 'Select Payment Method', 'Review Items'];
 
 function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
+  const [orderDetails,setOrderDetails] = useState([]);
+
+  function addOrderDetails(field, value) {
+    setOrderDetails((prev) => [
+      ...prev,            
+      { [field]: value } 
+    ]);
+  }
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
@@ -33,6 +42,17 @@ function Checkout() {
         ))}
       </Stepper>
       <div>
+      {activeStep === 0 && (
+        <div>
+          <AddressSelector addOrderDetails={addOrderDetails}/>
+          {
+            console.log("order details are:")
+          }
+          {
+          console.log(orderDetails)}
+          
+        </div>
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2 }}>
           <Button
           sx={{

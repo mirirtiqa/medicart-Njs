@@ -71,10 +71,18 @@ export default function DoctorsPage() {
         ...doc.data()
       }));
 
-      setDoctorsList(results);
-      setFilteredDoctors(results);
+      // Filter doctors with complete profiles
+      const filteredResults = results.filter(doctor => 
+        doctor.name && 
+        doctor.specialization &&
+        doctor.experience &&
+        doctor.fees
+      );
 
-      const uniqueSpecializations = [...new Set(results.map(doctor => doctor.specialization))];
+      setDoctorsList(filteredResults);
+      setFilteredDoctors(filteredResults);
+
+      const uniqueSpecializations = [...new Set(filteredResults.map(doctor => doctor.specialization))];
       setSpecializations(uniqueSpecializations);
 
     } catch (error) {
@@ -154,8 +162,9 @@ export default function DoctorsPage() {
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        padding: '20px'
+        justifyContent: 'flex-start',  // Distribute space evenly between cards
+        gap: '5rem',                      // Space between the cards (optional for small gaps)
+        padding: '3rem'
       }}>
         {filteredDoctors.length === 0 ? (
           <Typography variant="h6">No doctors available.</Typography>

@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation';
 import { db } from "@/lib/firebase";
 import { doc, setDoc, getDocs, collection, query, where } from "firebase/firestore";
+import GoogleIcon from '@mui/icons-material/Google'; // Import Google Icon
 
 export default function Signup() {
   const [error, setError] = useState('');
@@ -193,16 +194,23 @@ export default function Signup() {
           </Box>
 
           {!isDoctorSignup && (
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Button
                 variant="outlined"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
+                sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none', display: 'flex', alignItems: 'center' }}
               >
+                <GoogleIcon sx={{ marginRight: 1, color: 'inherit' }} /> {/* Google icon with inherited color */}
                 Sign up with Google
               </Button>
             </Box>
+          )}
+
+          {!isDoctorSignup && (
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+              Already have an account? <Button href="/login" variant="text">Log In</Button>
+            </Typography>
           )}
 
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>

@@ -2,6 +2,7 @@
 import Account from '@/components/Account';
 
 const MyAccountPage = () => {
+  
   return <Account/>;
 };
 

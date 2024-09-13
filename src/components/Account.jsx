@@ -26,7 +26,7 @@ const InfoRow = styled(Box)`
 
 const Account = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false); // Separate state for edit dialog
+  const [editDialogOpen, setEditDialogOpen] = useState(false); 
   const [isDoctor, setIsDoctor] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState(null);
   const [loading, setLoading] = useState(true);

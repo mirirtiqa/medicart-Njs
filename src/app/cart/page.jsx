@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation' 
 import Counter from '@/components/Counter';
+import { useAuth } from '@/contexts/AuthContexts';
 const CartContainer = styled.div`
   padding: 20px;
   max-width: 800px;
@@ -37,6 +38,7 @@ const QuantityControls = styled.div`
 `;
 
 const CartPage = () => {
+  const { currentUser, logout } = useAuth();
   const router = useRouter(); 
   const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
 
@@ -51,11 +53,19 @@ const CartPage = () => {
 
   }
 
+  function handleSignIn(){
+    router.push('\login')
+  }
+  function handleSignUp(){
+    router.push('\signup')
+  }
+
   return (
     <CartContainer>
       <Typography variant="h4" gutterBottom>
         Your Cart
       </Typography>
+      
       {cartItems.length === 0 ? (
         <Typography>Your cart is empty.</Typography>
       ) : (
@@ -107,6 +117,22 @@ const CartPage = () => {
           </Box>
         </>
       )}
+
+{
+        !currentUser && (
+
+          <div style={{display:'flex',flexDirection:'colum',marginTop:'1.5rem',gap:'1rem'}}>
+          <Button variant="contained" sx={{ color: 'white', borderColor: 'tertiary.main',bgcolor:"tertiary.main",boxShadow:'none' }} onClick={handleSignIn}>
+              Sign in to your account
+            </Button>
+            <Button variant="outlined" sx={{ color: 'tertiary.main', borderColor: 'tertiary.main' }} onClick={handleSignUp}>
+              Signup now
+            </Button>
+
+          </div>
+
+        )
+      }
     </CartContainer>
   );
 };

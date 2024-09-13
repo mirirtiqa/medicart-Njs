@@ -27,6 +27,7 @@ export default function UserDetailsTooltip({ children }) {
   
   const [openDialog, setOpenDialog] = React.useState(false);
   const [isDoctor, setIsDoctor] = React.useState(false);
+  const [doctorName, setDoctorName] = React.useState('');
 
   React.useEffect(() => {
     const checkDoctorStatus = async () => {
@@ -35,6 +36,7 @@ export default function UserDetailsTooltip({ children }) {
         const doctorDoc = await getDoc(doctorDocRef);
         if (doctorDoc.exists()) {
           setIsDoctor(true);
+          setDoctorName(`Dr. ${doctorDoc.data().name || currentUser.displayName || 'No name'}`);
         } else {
           setIsDoctor(false);
         }
@@ -74,12 +76,12 @@ export default function UserDetailsTooltip({ children }) {
             <Box display="flex" alignItems="center" mb={1}>
               <img
                 src={userDetails.photoURL || '/default-avatar.png'}
-                alt={userDetails.displayName || 'User'}
+                alt={isDoctor ? doctorName : userDetails.displayName || 'User'}
                 style={{ width: 56, height: 56, borderRadius: '50%' }}
               />
               <Box ml={2}>
                 <Typography color="inherit" variant="body1" sx={{ fontWeight: 'bold' }}>
-                  {userDetails.displayName || 'No name'}
+                  {isDoctor ? doctorName : userDetails.displayName || 'No name'}
                 </Typography>
                 <Typography color="textSecondary" variant="body2" sx={{ fontWeight: 'bold' }}>
                   {userDetails.email || 'No email'}
@@ -101,7 +103,7 @@ export default function UserDetailsTooltip({ children }) {
                 <Typography
                   style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
                   variant="body2"
-                  onClick={() => router.push('/appointment-requests')}
+                  onClick={() => router.push('/AppointmentRequestsPage')}
                 >
                   Appointment Requests
                 </Typography>
@@ -125,7 +127,7 @@ export default function UserDetailsTooltip({ children }) {
                 <Typography
                   style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
                   variant="body2"
-                  onClick={() => router.push('/appointments')}
+                  onClick={() => router.push('/MyAppointmentsPage')}
                 >
                   My Appointments
                 </Typography>

@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation';
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import GoogleIcon from '@mui/icons-material/Google'; // Import Google Icon
 
 export default function Login() {
   const [error, setError] = useState('');
@@ -169,38 +170,45 @@ export default function Login() {
               Submit
             </Button>
           </Box>
-        </CardContent>
 
-        {!isDoctorLogin && (
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none' }}
-            >
-              Login with Google
-            </Button>
-          </Box>
-        )}
-
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          {isDoctorLogin ? (
-            <>
-              Need an account? <Button href="/signup" variant="text">Sign Up</Button>
-            </>
-          ) : (
-            <>
-              Are you a doctor? <Button onClick={() => setIsDoctorLogin(true)} variant="text">Login as Doctor</Button>
-            </>
+          {!isDoctorLogin && (
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none', display: 'flex', alignItems: 'center' }}
+              >
+                <GoogleIcon sx={{ marginRight: 1, color: 'inherit' }} /> {/* Ensure the color inherits from the button */}
+                Login with Google
+              </Button>
+            </Box>
           )}
-        </Typography>
 
-        {isDoctorLogin && (
-          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            <Button onClick={() => setIsDoctorLogin(false)} variant="text">Login as User</Button>
+          {!isDoctorLogin && (
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+              Don't have an account? <Button href="/signup" variant="text">Sign Up</Button>
+            </Typography>
+          )}
+
+          <Typography variant="body2" align="center" sx={{ mt: 0.5 }}>
+            {isDoctorLogin ? (
+              <>
+                Need an account? <Button href="/signup" variant="text">Sign Up</Button>
+              </>
+            ) : (
+              <>
+                Are you a doctor? <Button onClick={() => setIsDoctorLogin(true)} variant="text">Login as Doctor</Button>
+              </>
+            )}
           </Typography>
-        )}
+
+          {isDoctorLogin && (
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+              <Button onClick={() => setIsDoctorLogin(false)} variant="text">Login as User</Button>
+            </Typography>
+          )}
+        </CardContent>
       </Card>
     </Container>
   );

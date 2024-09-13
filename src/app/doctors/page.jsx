@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { DatePicker, TimePicker } from '@atlaskit/datetime-picker';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -16,20 +15,25 @@ import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
 import '@atlaskit/css-reset'; // Required for Atlaskit components
+import { useAuth } from '@/contexts/AuthContexts'; // Adjust the import based on your actual auth context path
+import { doc, setDoc } from 'firebase/firestore';
 
-// Generate allowed times at 30-minute intervals from 9 AM to 5 PM
+// Generate allowed times at 30-minute intervals from 9 AM to 5 PM (excluding 6 PM)
 const generateAllowedTimes = () => {
   const allowedTimes = [];
   const startHour = 9;
-  const endHour = 16;
+  const endHour = 17; // Update end hour to exclude 6 PM
 
   for (let hour = startHour; hour < endHour; hour++) {
     allowedTimes.push(`${hour}:00`); // Minute 0
     allowedTimes.push(`${hour}:30`); // Minute 30
   }
 
-  return allowedTimes.filter(time => time !== "16:30");
+  return allowedTimes;
 };
 
 const allowedTimes = generateAllowedTimes();
@@ -59,6 +63,15 @@ export default function DoctorsPage() {
   const [selectedDates, setSelectedDates] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const { currentUser, isDoctor } = useAuth(); // Use your authentication context to get user and role
+
+  // Debugging: Log user and isDoctor to ensure they are set correctly
+  useEffect(() => {
+    console.log('User:', currentUser);
+    console.log('Is Doctor:', isDoctor);
+  }, [currentUser, isDoctor]);
 
   const fetchAllDoctors = async () => {
     setLoading(true);
@@ -98,30 +111,35 @@ export default function DoctorsPage() {
   }, []);
 
   const handleDateChange = (doctorId, newDate) => {
-    const selectedDate = new Date(newDate); // Convert string to Date object
+    if (newDate instanceof Date && !isNaN(newDate.getTime())) {
+      const dateObject = new Date(newDate); // Ensure it's a valid Date object
 
-    if (selectedDate.getDay() === 0) { // Check if it's Sunday
-      alert("Clinic is not functional on a Sunday");
-      return; // Prevent selection
-    }
-
-    setSelectedDates(prevState => ({
-      ...prevState,
-      [doctorId]: {
-        ...prevState[doctorId],
-        date: newDate
+      if (dateObject.getDay() === 0) { // Check if it's Sunday
+        setDialogMessage("Clinic is not functional on a Sunday");
+        setOpenDialog(true);
+        return; // Prevent selection
       }
-    }));
+
+      setSelectedDates(prevState => ({
+        ...prevState,
+        [doctorId]: {
+          ...prevState[doctorId],
+          date: dateObject
+        }
+      }));
+    }
   };
 
   const handleTimeChange = (doctorId, newTime) => {
-    setSelectedDates(prevState => ({
-      ...prevState,
-      [doctorId]: {
-        ...prevState[doctorId],
-        time: newTime
-      }
-    }));
+    if (newTime) {
+      setSelectedDates(prevState => ({
+        ...prevState,
+        [doctorId]: {
+          ...prevState[doctorId],
+          time: newTime
+        }
+      }));
+    }
   };
 
   const handleSpecializationChange = (event) => {
@@ -136,9 +154,51 @@ export default function DoctorsPage() {
     }
   };
 
-  const shouldDisableDate = (date) => {
-    return date.getDay() === 0; // Disable Sundays
+  const handleDialogClose = () => {
+    setOpenDialog(false);
   };
+
+  const handleBookAppointment = async (doctor) => {
+  if (!currentUser) {
+    setDialogMessage('Please log in to book an appointment.');
+    setOpenDialog(true);
+    return;
+  }
+
+  // Ensure date and time are both selected
+  const selectedDate = selectedDates[doctor.id]?.date;
+  const selectedTime = selectedDates[doctor.id]?.time;
+  if (!selectedDate || !selectedTime) {
+    setDialogMessage('Please select both date and time.');
+    setOpenDialog(true);
+    return;
+  }
+
+  try {
+    // Create appointment request
+    const appointmentId = `${currentUser.uid}_${doctor.id}_${selectedDate.toISOString()}`;
+    const appointmentRef = doc(db, 'appointments', appointmentId);
+
+    await setDoc(appointmentRef, {
+      userId: currentUser.uid,
+      doctorId: doctor.id,
+      date: selectedDate,
+      time: selectedTime,
+      status: 'Pending' // or 'Requested'
+    });
+
+    // Optionally, you can also update the doctor's appointment requests here
+    // const doctorAppointmentsRef = doc(db, 'doctors', doctor.id, 'appointmentRequests', currentUser.uid);
+    // await setDoc(doctorAppointmentsRef, { ... });
+
+    setDialogMessage('Appointment request sent successfully.');
+    setOpenDialog(true);
+  } catch (error) {
+    console.error('Error booking appointment:', error);
+    setDialogMessage('Failed to book appointment.');
+    setOpenDialog(true);
+  }
+};
 
   return (
     <div>
@@ -200,6 +260,7 @@ export default function DoctorsPage() {
                     value={selectedDates[doctor.id]?.date || null}
                     placeholder="Select Date"
                     popperPlacement="bottom-start"
+                    dateFormat="DD/MM/YYYY"
                   />
                   <TimePicker
                     onChange={(newTime) => handleTimeChange(doctor.id, newTime)}
@@ -217,9 +278,7 @@ export default function DoctorsPage() {
                     backgroundColor: '#01D6A3',
                     '&:hover': { bgcolor: 'white', color: '#01D6A3' }
                   }}
-                  onClick={() => {
-                    console.log(`Booking appointment for ${doctor.name} on ${selectedDates[doctor.id]?.date} at ${selectedDates[doctor.id]?.time}`);
-                  }}
+                  onClick={() => handleBookAppointment(doctor)}
                 >
                   Book Appointment
                 </Button>
@@ -228,6 +287,20 @@ export default function DoctorsPage() {
           ))
         )}
       </Box>
+
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+      >
+        <DialogContent>
+          <Typography>{dialogMessage}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

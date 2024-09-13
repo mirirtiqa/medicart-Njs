@@ -11,6 +11,7 @@
   "dependencies": {
     "@atlaskit/css-reset": "^6.10.1",
     "@atlaskit/datetime-picker": "^14.0.3",
+    "@date-io/dayjs": "^3.0.0",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",

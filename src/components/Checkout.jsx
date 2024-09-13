@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Stepper, Step, StepLabel, Button, Box, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import AddressSelector from './AddressSelector';
+import PaymentComponent from './PaymentComponent';
 
 const steps = ['Select Address', 'Select Payment Method', 'Review Items'];
 
@@ -52,6 +53,18 @@ function Checkout() {
           console.log(orderDetails)}
           
         </div>
+        )}
+        {activeStep ===1 && (
+          <div>
+
+           <PaymentComponent addOrderDetails={addOrderDetails} />
+           {
+            console.log("order detsia")
+           }
+           {
+            console.log(orderDetails)
+           }
+           </div>
         )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2 }}>
           <Button

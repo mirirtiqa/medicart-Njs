@@ -164,7 +164,7 @@ const DoctorAccount = () => {
                 fullWidth
                 label="Name"
                 name="name"
-                value={formData.name.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
+                value={formData.name?.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
                 variant="outlined"
                 sx={{ marginBottom: '1rem' }}

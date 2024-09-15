@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Container, Typography, Paper, Box, Button, TextField,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-  Checkbox, FormControlLabel
+  Checkbox, FormControlLabel, Grid
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
@@ -83,12 +83,25 @@ const DoctorAccount = () => {
     }
   };
 
-  const handleDateChange = (newDate) => {
-    if (newDate && dayjs(newDate).day() !== 0) {
-      setSelectedDate(newDate);
-    } else {
-      setPopupMessage("You can't select Sundays");
-      setPopupOpen(true);
+  const handleDateChange = async (newDate) => {
+    setSelectedDate(newDate);
+
+    // Fetch availability for the selected date
+    const doctorDocRef = doc(db, 'doctors', currentUser.uid);
+    const docSnap = await getDoc(doctorDocRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const availability = data.availability || {};
+
+      const selectedDateStr = newDate.format('YYYY-MM-DD');
+      if (availability[selectedDateStr]) {
+        // If there are time slots for the selected date, set them
+        setAvailableTimeSlots(availability[selectedDateStr]);
+      } else {
+        // If no time slots for the selected date, reset available time slots
+        setAvailableTimeSlots([]);
+      }
     }
   };
 
@@ -142,166 +155,168 @@ const DoctorAccount = () => {
     setPopupOpen(false);
   };
 
+  const shouldDisableDate = (date) => {
+    const dayOfWeek = date.day();
+    const isSunday = dayOfWeek === 0;
+    const today = dayjs();
+    const isMoreThanAWeekAway = date.isAfter(today.add(7, 'day'));
+    const isPastDate = date.isBefore(today, 'day'); // Disable past dates
+  
+    return isSunday || isMoreThanAWeekAway || isPastDate;
+  };
+
   if (loading) {
     return <Typography>Loading...</Typography>;
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Container maxWidth="md" sx={{ marginTop: '3rem' }}>
+      <Container maxWidth="lg" sx={{ marginTop: '3rem' }}>
         <Typography variant="h4" gutterBottom>
           Doctor Settings
         </Typography>
 
-        <StyledPaper elevation={3}>
-          {/* Doctor Information Fields */}
-          <InfoRow>
-            <Box>
-              <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
-                Name
-              </Typography>
-              <TextField
-                fullWidth
-                label="Name"
-                name="name"
-                value={formData.name?.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
-                variant="outlined"
-                sx={{ marginBottom: '1rem' }}
-              />
-            </Box>
-          </InfoRow>
-
-          <InfoRow>
-            <Box>
-              <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
-                Specialization
-              </Typography>
-              <TextField
-                fullWidth
-                label="Specialization"
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Box>
-          </InfoRow>
-
-          <InfoRow>
-            <Box>
-              <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
-                Experience
-              </Typography>
-              <TextField
-                fullWidth
-                label="Experience (years)"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Box>
-          </InfoRow>
-
-          <InfoRow>
-            <Box>
-              <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
-                Fees
-              </Typography>
-              <TextField
-                fullWidth
-                label="Fees"
-                name="fees"
-                value={formData.fees}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Box>
-          </InfoRow>
-
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
-            onClick={handleDoctorUpdate}
-          >
-            Update Doctor Details
-          </Button>
-        </StyledPaper>
-
-        {/* Availability Section */}
-        <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-          Set Available Dates & Time Slots
-        </Typography>
-
-        {/* Date Picker */}
-        <StyledPaper elevation={3} sx={{ mt: 2 }}>
-          <DatePicker
-            label="Select Available Date"
-            value={selectedDate}
-            onChange={handleDateChange}
-            disablePast
-            shouldDisableDate={(date) => dayjs(date).day() === 0} // Disable Sundays
-          />
-
-          {/* "Select All" Checkbox */}
-          <Box sx={{ mt: 2 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                />
-              }
-              label="Select All Time Slots"
-            />
-          </Box>
-
-          {/* Time Slot Selection */}
-          <Box sx={{ mt: 2 }}>
-            {timeSlots.map((slot) => (
-              <FormControlLabel
-                key={slot}
-                control={
-                  <Checkbox
-                    checked={availableTimeSlots.includes(slot)}
-                    onChange={handleTimeSlotChange}
-                    value={slot}
+        <Grid container spacing={3} alignItems="center">
+          {/* Left side (Doctor Details) */}
+          <Grid item xs={12} md={6}>
+            <StyledPaper elevation={3}>
+              {/* Doctor Information Fields */}
+              <InfoRow>
+                <Box>
+                  <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
+                    Name
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Name"
+                    name="name"
+                    value={formData.name?.startsWith('Dr. ') ? formData.name : `Dr. ${formData.name}`}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/^Dr\. /, '') })}
+                    variant="outlined"
+                    sx={{ marginBottom: '1rem' }}
                   />
-                }
-                label={slot}
+                </Box>
+              </InfoRow>
+
+              <InfoRow>
+                <Box>
+                  <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
+                    Specialization
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Specialization"
+                    name="specialization"
+                    value={formData.specialization}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Box>
+              </InfoRow>
+
+              <InfoRow>
+                <Box>
+                  <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
+                    Experience
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Experience (years)"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Box>
+              </InfoRow>
+
+              <InfoRow>
+                <Box>
+                  <Typography sx={{ color: 'tertiary.main' }} variant="subtitle1" fontWeight="bold">
+                    Fees
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Fees"
+                    name="fees"
+                    value={formData.fees}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Box>
+              </InfoRow>
+            </StyledPaper>
+          </Grid>
+
+          {/* Right side (Availability) */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>
+              Set Available Dates & Time Slots
+            </Typography>
+            <StyledPaper elevation={3}>
+              <DatePicker
+                label="Select Date"
+                value={selectedDate}
+                shouldDisableDate={shouldDisableDate}
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField {...params} fullWidth />}
               />
-            ))}
-          </Box>
+            </StyledPaper>
 
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
-            onClick={handleAvailabilityUpdate}
-          >
-            Update Availability
-          </Button>
-        </StyledPaper>
+            {selectedDate && (
+              <StyledPaper elevation={3} sx={{ mt: 2 }}>
+                <FormControlLabel
+                  control={<Checkbox checked={selectAll} onChange={handleSelectAll} />}
+                  label="Select All"
+                />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {timeSlots.map((slot, index) => (
+                    <FormControlLabel
+                      key={index}
+                      control={
+                        <Checkbox
+                          value={slot}
+                          checked={availableTimeSlots.includes(slot)}
+                          onChange={handleTimeSlotChange}
+                        />
+                      }
+                      label={slot}
+                    />
+                  ))}
+                </Box>
+              </StyledPaper>
+            )}
+          </Grid>
 
-        {/* Pop-up dialog for success/error messages */}
-        <Dialog
-          open={popupOpen}
-          onClose={handlePopupClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Update Status"}</DialogTitle>
+          {/* Buttons on the same line */}
+          <Grid item xs={12} sx={{ mb: 3, display: 'flex', justifyContent: 'space-around' }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+              onClick={handleDoctorUpdate}
+            >
+              Update Doctor Details
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+              onClick={handleAvailabilityUpdate}
+            >
+              Update Availability
+            </Button>
+          </Grid>
+        </Grid>
+
+
+        {/* Success/Error Dialog */}
+        <Dialog open={popupOpen} onClose={handlePopupClose}>
+          <DialogTitle>Message</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {popupMessage}
-            </DialogContentText>
+            <DialogContentText>{popupMessage}</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handlePopupClose} autoFocus>
-              Close
-            </Button>
+            <Button onClick={handlePopupClose}>OK</Button>
           </DialogActions>
         </Dialog>
       </Container>

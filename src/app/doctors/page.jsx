@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -19,7 +19,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import '@atlaskit/css-reset'; // Required for Atlaskit components
 import { useAuth } from '@/contexts/AuthContexts'; // Adjust the import based on your actual auth context path
-import { setDoc } from 'firebase/firestore';
 
 const CustomFormControl = styled(FormControl)(({ theme }) => ({
   width: '100%',
@@ -49,6 +48,7 @@ export default function DoctorsPage() {
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
+  const [expandedDoctorId, setExpandedDoctorId] = useState(null); // State to track expanded card
   const { currentUser } = useAuth();
 
   const fetchAllDoctors = async () => {
@@ -95,7 +95,6 @@ export default function DoctorsPage() {
     }
   };
 
-  // Fetch available slots based on the selected date from the 'availability' map
   const fetchAvailableSlots = async (doctorId, date) => {
     try {
       const doctorRef = doc(db, 'doctors', doctorId);
@@ -116,11 +115,26 @@ export default function DoctorsPage() {
   };
 
   const handleDateSelection = (doctorId, date) => {
-    fetchAvailableSlots(doctorId, date);
-    setSelectedAppointments((prevState) => ({
-      ...prevState,
-      [doctorId]: { ...prevState[doctorId], date },
-    }));
+    if (selectedAppointments[doctorId]?.date === date) {
+      // Deselect date
+      setSelectedAppointments((prevState) => ({
+        ...prevState,
+        [doctorId]: { ...prevState[doctorId], date: undefined, time: undefined },
+      }));
+      setAvailableSlots((prevState) => ({
+        ...prevState,
+        [doctorId]: [],
+      }));
+      setExpandedDoctorId(null); // Collapse the card
+    } else {
+      // Select new date
+      fetchAvailableSlots(doctorId, date);
+      setSelectedAppointments((prevState) => ({
+        ...prevState,
+        [doctorId]: { ...prevState[doctorId], date },
+      }));
+      setExpandedDoctorId(doctorId); // Expand the card
+    }
   };
 
   const handleSlotSelection = (doctorId, time) => {
@@ -147,9 +161,10 @@ export default function DoctorsPage() {
 
     try {
       const { date, time } = selectedAppointment;
-      const appointmentId = `${currentUser.uid}_${doctor.id}_${date}`;
+      const appointmentId = `${currentUser.uid}_${doctor.id}_${date}_${time}`;
       const appointmentRef = doc(db, 'appointments', appointmentId);
 
+      // Store the appointment in a single collection
       await setDoc(appointmentRef, {
         userId: currentUser.uid,
         doctorId: doctor.id,
@@ -166,6 +181,8 @@ export default function DoctorsPage() {
       setOpenDialog(true);
     }
   };
+    
+  
 
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -198,12 +215,13 @@ export default function DoctorsPage() {
             <Card
               key={doctor.id}
               sx={{
-                width: '30%',
+                width: expandedDoctorId === doctor.id ? '40%' : '30%', // Adjust width based on expansion state
                 marginBottom: '20px',
                 border: '2px solid black',
                 borderRadius: '10px',
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
                 padding: '10px',
+                transition: 'width 0.3s ease', // Smooth transition for width changes
               }}
             >
               <CardContent>
@@ -232,23 +250,25 @@ export default function DoctorsPage() {
                   )}
                 </Box>
 
-                <Box sx={{ marginTop: 2 }}>
-                  <Typography variant="subtitle1">Available Time Slots:</Typography>
-                  {availableSlots[doctor.id]?.length > 0 ? (
-                    availableSlots[doctor.id].map((time, index) => (
-                      <Button
-                        key={index}
-                        variant={selectedAppointments[doctor.id]?.time === time ? 'contained' : 'outlined'}
-                        sx={{ margin: '0.5rem', textTransform: 'none' }}
-                        onClick={() => handleSlotSelection(doctor.id, time)}
-                      >
-                        {time}
-                      </Button>
-                    ))
-                  ) : (
-                    <Typography>Select a date to see available slots.</Typography>
-                  )}
-                </Box>
+                {expandedDoctorId === doctor.id && ( // Show slots only if the card is expanded
+                  <Box sx={{ marginTop: 2 }}>
+                    <Typography variant="subtitle1">Available Time Slots:</Typography>
+                    {availableSlots[doctor.id]?.length > 0 ? (
+                      availableSlots[doctor.id].map((time, index) => (
+                        <Button
+                          key={index}
+                          variant={selectedAppointments[doctor.id]?.time === time ? 'contained' : 'outlined'}
+                          sx={{ margin: '0.5rem', textTransform: 'none' }}
+                          onClick={() => handleSlotSelection(doctor.id, time)}
+                        >
+                          {time}
+                        </Button>
+                      ))
+                    ) : (
+                      <Typography>Select a date to see available slots.</Typography>
+                    )}
+                  </Box>
+                )}
               </CardContent>
               <CardActions>
                 <Button
@@ -281,4 +301,3 @@ export default function DoctorsPage() {
     </div>
   );
 }
-

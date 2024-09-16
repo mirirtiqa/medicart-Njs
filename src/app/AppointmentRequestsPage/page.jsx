@@ -75,7 +75,7 @@ export default function AppointmentRequestsPage() {
                                 padding: '10px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                alignItems: 'center'
+                                alignItems: 'center',
                             }}
                         >
                             <CardContent>
@@ -86,24 +86,33 @@ export default function AppointmentRequestsPage() {
                                 <Typography sx={{ padding: '0.5rem' }}>Patient's Email: {appointment.patientsEmail}</Typography>
                                 <Typography sx={{ padding: '0.5rem' }}>Date: {appointment.date}</Typography>
                                 <Typography sx={{ padding: '0.5rem' }}>Time: {appointment.time}</Typography>
-                                <Typography sx={{ padding: '0.5rem' }}>Status: {appointment.status}</Typography>
+                                <Typography 
+                                    sx={{
+                                        padding: '0.5rem',
+                                        color: appointment.status === 'Accepted' ? '#01D6A3' : appointment.status === 'Declined' ? 'red' : 'black',
+                                    }}
+                                >
+                                    Status: {appointment.status}
+                                </Typography>
                             </CardContent>
-                            <Box sx={{ display: 'flex', gap: '1rem', padding: '1rem' }}>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick={() => handleAppointmentStatus(appointment.id, 'Accepted')}
-                                >
-                                    Accept
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => handleAppointmentStatus(appointment.id, 'Declined')}
-                                >
-                                    Decline
-                                </Button>
-                            </Box>
+                            {appointment.status === 'Pending' && (
+                                <Box sx={{ display: 'flex', gap: '1rem', padding: '1rem' }}>
+                                    <Button
+                                        variant="contained"
+                                        color="success"
+                                        onClick={() => handleAppointmentStatus(appointment.id, 'Accepted')}
+                                    >
+                                        Accept
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() => handleAppointmentStatus(appointment.id, 'Declined')}
+                                    >
+                                        Decline
+                                    </Button>
+                                </Box>
+                            )}
                         </Card>
                     ))
                 )}

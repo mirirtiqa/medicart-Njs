@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -56,6 +56,17 @@ export default function MyAppointmentsPage() {
         }
     }, [currentUser]);
 
+    const getColorBasedOnStatus = (status) => {
+        switch (status) {
+            case 'Accepted':
+                return '#01D6A3'; // Text color for accepted status
+            case 'Declined':
+                return 'red'; // Text color for declined status
+            default:
+                return '#000'; // Default text color
+        }
+    };
+
     return (
         <div>
             <Typography fontWeight={'bold'} variant="h4" sx={{ padding: '25px' }}>My Appointments</Typography>
@@ -65,28 +76,36 @@ export default function MyAppointmentsPage() {
                 ) : appointments.length === 0 ? (
                     <Typography>No appointments.</Typography>
                 ) : (
-                    appointments.map((appointment) => (
-                        <Card
-                            key={appointment.id}
-                            sx={{
-                                width: '100%',
-                                border: '2px solid black',
-                                borderRadius: '10px',
-                                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
-                                padding: '10px',
-                            }}
-                        >
-                            <CardContent>
-                                <Typography variant="h6" component="div">Appointment</Typography>
-                                <Typography sx={{ padding: '0.5rem' }}>
-                                    Doctor: {appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`}
-                                </Typography>
-                                <Typography sx={{ padding: '0.5rem' }}>Date: {appointment.date}</Typography>
-                                <Typography sx={{ padding: '0.5rem' }}>Time: {appointment.time}</Typography>
-                                <Typography sx={{ padding: '0.5rem' }}>Status: {appointment.status}</Typography>
-                            </CardContent>
-                        </Card>
-                    ))
+                    appointments.map((appointment) => {
+                        // Determine color based on status
+                        const statusColor = getColorBasedOnStatus(appointment.status);
+
+                        return (
+                            <Card
+                                key={appointment.id}
+                                sx={{
+                                    width: '100%',
+                                    border: '2px solid black',
+                                    borderRadius: '10px',
+                                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
+                                    padding: '10px',
+                                    backgroundColor: '#ffffff', // Keep the card background color consistent
+                                }}
+                            >
+                                <CardContent>
+                                    <Typography variant="h6" component="div">Appointment</Typography>
+                                    <Typography sx={{ padding: '0.5rem' }}>
+                                        Doctor: {appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`}
+                                    </Typography>
+                                    <Typography sx={{ padding: '0.5rem' }}>Date: {appointment.date}</Typography>
+                                    <Typography sx={{ padding: '0.5rem' }}>Time: {appointment.time}</Typography>
+                                    <Typography sx={{ padding: '0.5rem', color: statusColor }}>
+                                        Status: {appointment.status}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        );
+                    })
                 )}
             </Box>
         </div>

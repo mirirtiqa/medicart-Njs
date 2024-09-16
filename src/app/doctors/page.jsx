@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -17,8 +17,7 @@ import { styled } from '@mui/system';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import '@atlaskit/css-reset'; // Required for Atlaskit components
-import { useAuth } from '@/contexts/AuthContexts'; // Adjust the import based on your actual auth context path
+import { useAuth } from '@/contexts/AuthContexts';
 
 const CustomFormControl = styled(FormControl)(({ theme }) => ({
   width: '100%',
@@ -34,7 +33,7 @@ const CustomFormControl = styled(FormControl)(({ theme }) => ({
   },
   '& .MuiInputLabel-root': {
     fontSize: '1.1rem',
-  }
+  },
 }));
 
 export default function DoctorsPage() {
@@ -48,7 +47,7 @@ export default function DoctorsPage() {
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
-  const [expandedDoctorId, setExpandedDoctorId] = useState(null); // State to track expanded card
+  const [expandedDoctorId, setExpandedDoctorId] = useState(null);
   const { currentUser } = useAuth();
 
   const fetchAllDoctors = async () => {
@@ -104,10 +103,37 @@ export default function DoctorsPage() {
         const doctorData = doctorSnap.data();
         const availability = doctorData.availability || {};
 
-        setAvailableSlots((prev) => ({
-          ...prev,
-          [doctorId]: availability[date] || [],
-        }));
+        // Fetch accepted appointments for the doctor and the selected date
+        const appointmentsRef = collection(db, 'appointments');
+        const q = query(
+          appointmentsRef,
+          where('doctorId', '==', doctorId),
+          where('date', '==', date),
+          where('status', '==', 'Accepted')
+        );
+        const querySnapshot = await getDocs(q);
+
+        // Get the list of accepted time slots
+        const acceptedTimes = querySnapshot.docs.map(doc => doc.data().time);
+
+        // Filter out the accepted time slots from the available ones
+        const availableTimes = (availability[date] || []).filter(time => !acceptedTimes.includes(time));
+
+        // Check if the date is in the future before setting available slots
+        const today = new Date();
+        const selectedDate = new Date(date);
+
+        if (selectedDate >= today) {
+          setAvailableSlots((prev) => ({
+            ...prev,
+            [doctorId]: availableTimes,
+          }));
+        } else {
+          setAvailableSlots((prev) => ({
+            ...prev,
+            [doctorId]: [], // Clear slots for past dates
+          }));
+        }
       }
     } catch (error) {
       console.error('Error fetching available slots:', error);
@@ -116,7 +142,6 @@ export default function DoctorsPage() {
 
   const handleDateSelection = (doctorId, date) => {
     if (selectedAppointments[doctorId]?.date === date) {
-      // Deselect date
       setSelectedAppointments((prevState) => ({
         ...prevState,
         [doctorId]: { ...prevState[doctorId], date: undefined, time: undefined },
@@ -125,26 +150,33 @@ export default function DoctorsPage() {
         ...prevState,
         [doctorId]: [],
       }));
-      setExpandedDoctorId(null); // Collapse the card
+      setExpandedDoctorId(null);
     } else {
-      // Select new date
       fetchAvailableSlots(doctorId, date);
       setSelectedAppointments((prevState) => ({
         ...prevState,
         [doctorId]: { ...prevState[doctorId], date },
       }));
-      setExpandedDoctorId(doctorId); // Expand the card
+      setExpandedDoctorId(doctorId);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB'); // This formats the date to DD/MM/YYYY
   };
 
   const handleSlotSelection = (doctorId, time) => {
     setSelectedAppointments((prevState) => ({
       ...prevState,
-      [doctorId]: { ...prevState[doctorId], time },
+      [doctorId]: {
+        ...prevState[doctorId],
+        time: prevState[doctorId]?.time === time ? undefined : time, // Deselect if clicked again
+      },
     }));
   };
 
-const handleBookAppointment = async (doctor) => {
+  const handleBookAppointment = async (doctor) => {
     const selectedAppointment = selectedAppointments[doctor.id];
 
     if (!currentUser) {
@@ -164,19 +196,15 @@ const handleBookAppointment = async (doctor) => {
       const appointmentId = `${currentUser.uid}_${doctor.id}_${date}_${time}`;
       const appointmentRef = doc(db, 'appointments', appointmentId);
 
-      // Assume the user's name is available in currentUser.displayName or from user profile data
-      const patientsName = currentUser.displayName || 'Unknown Patient'; // Replace with the appropriate field if stored elsewhere
+      const patientsName = currentUser.displayName || 'Unknown Patient';
       const patientsEmail = currentUser.email || 'Unknown Email';
-      
-      // Doctor's name comes from the doctor object
-      const doctorName = `Dr. ${doctor.name || 'Unknown Doctor'}`; // Replace with the correct field for the doctor's name
+      const doctorName = `Dr. ${doctor.name || 'Unknown Doctor'}`;
 
-      // Store the appointment in a single collection, with doctor and patient's names
       await setDoc(appointmentRef, {
         userId: currentUser.uid,
         doctorId: doctor.id,
-        doctorName, // Doctor's name
-        patientsName, // Patient's (user's) name
+        doctorName,
+        patientsName,
         patientsEmail,
         date,
         time,
@@ -192,8 +220,6 @@ const handleBookAppointment = async (doctor) => {
     }
   };
 
-  
-
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
@@ -201,7 +227,9 @@ const handleBookAppointment = async (doctor) => {
   return (
     <div>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography fontWeight={'bold'} variant="h4" sx={{ padding: '25px' }}>Available Doctors</Typography>
+        <Typography fontWeight={'bold'} variant="h4" sx={{ padding: '25px' }}>
+          Available Doctors
+        </Typography>
         <CustomFormControl variant="outlined" sx={{ width: '25%' }}>
           <InputLabel sx={{ padding: '15px' }}>Filter by Specialization</InputLabel>
           <Select
@@ -211,7 +239,9 @@ const handleBookAppointment = async (doctor) => {
           >
             <MenuItem value="">All Specializations</MenuItem>
             {specializations.map((spec, index) => (
-              <MenuItem key={index} value={spec}>{spec}</MenuItem>
+              <MenuItem key={index} value={spec}>
+                {spec}
+              </MenuItem>
             ))}
           </Select>
         </CustomFormControl>
@@ -225,61 +255,75 @@ const handleBookAppointment = async (doctor) => {
             <Card
               key={doctor.id}
               sx={{
-                width: expandedDoctorId === doctor.id ? '40%' : '30%', // Adjust width based on expansion state
+                width: expandedDoctorId === doctor.id ? '40%' : '30%',
                 marginBottom: '20px',
                 border: '2px solid black',
                 borderRadius: '10px',
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
                 padding: '10px',
-                transition: 'width 0.3s ease', // Smooth transition for width changes
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                transition: 'transform 0.3s ease, max-height 0.3s ease', // Smooth transition
+                transform: expandedDoctorId === doctor.id ? 'scale(1.05)' : 'scale(1)', // Scaling effect on expansion
+                maxHeight: expandedDoctorId === doctor.id ? '1000px' : '400px', // Expand smoothly on click
+                overflow: 'hidden',
               }}
             >
               <CardContent>
-                <Typography variant="h5" component="div" fontWeight={'500'} sx={{ padding: '0.5rem' }}>
-                  {doctor.name.startsWith('Dr. ') ? doctor.name : `Dr. ${doctor.name}`}
+                <Typography variant="h5" fontWeight={'bold'} gutterBottom>
+                  Dr. {doctor.name}
                 </Typography>
-                <Typography sx={{ padding: '0.5rem' }}>Specialization: {doctor.specialization}</Typography>
-                <Typography sx={{ padding: '0.5rem' }}>Experience: {doctor.experience} years</Typography>
-                <Typography sx={{ padding: '0.5rem' }}>Fees: ₹{doctor.fees}</Typography>
+                <Typography variant="body1" gutterBottom>
+                  Specialization: {doctor.specialization}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Experience: {doctor.experience} years
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Fees: ₹{doctor.fees}
+                </Typography>
 
-                <Box sx={{ marginTop: 2 }}>
-                  <Typography variant="subtitle1">Available Dates:</Typography>
-                  {doctor.availability && Object.keys(doctor.availability).length > 0 ? (
-                    Object.keys(doctor.availability).map((date, index) => (
-                      <Button
-                        key={index}
-                        variant={selectedAppointments[doctor.id]?.date === date ? 'contained' : 'outlined'}
-                        sx={{ margin: '0.5rem', textTransform: 'none' }}
-                        onClick={() => handleDateSelection(doctor.id, date)}
-                      >
-                        {date}
-                      </Button>
-                    ))
-                  ) : (
-                    <Typography>No available dates.</Typography>
-                  )}
+                <Box sx={{ marginTop: '20px' }}>
+                  <InputLabel sx={{ marginBottom: '10px' }}>Select a Date:</InputLabel>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    {doctor.availability
+                      ? Object.keys(doctor.availability)
+                        .sort((a, b) => new Date(a) - new Date(b)) // Sort dates in ascending order
+                        .filter(date => new Date(date) >= new Date()) // Filter out past dates
+                        .map((date) => (
+                          <Button
+                            key={date}
+                            variant={selectedAppointments[doctor.id]?.date === date ? 'contained' : 'outlined'}
+                            sx={{ margin: '0.5rem', textTransform: 'none' }}
+                            onClick={() => handleDateSelection(doctor.id, date)}
+                          >
+                            {formatDate(date)} {/* Format the date here */}
+                          </Button>
+                        ))
+                      : 'No availability'}
+                  </Box>
                 </Box>
 
-                {expandedDoctorId === doctor.id && ( // Show slots only if the card is expanded
-                  <Box sx={{ marginTop: 2 }}>
-                    <Typography variant="subtitle1">Available Time Slots:</Typography>
-                    {availableSlots[doctor.id]?.length > 0 ? (
-                      availableSlots[doctor.id].map((time, index) => (
+                {expandedDoctorId === doctor.id && availableSlots[doctor.id] && availableSlots[doctor.id].length > 0 && (
+                  <Box sx={{ marginTop: '20px' }}>
+                    <InputLabel sx={{ marginBottom: '10px' }}>Select a Time Slot:</InputLabel>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                      {availableSlots[doctor.id].map((time, index) => (
                         <Button
                           key={index}
                           variant={selectedAppointments[doctor.id]?.time === time ? 'contained' : 'outlined'}
-                          sx={{ margin: '0.5rem', textTransform: 'none' }}
+                          color="primary"
                           onClick={() => handleSlotSelection(doctor.id, time)}
                         >
                           {time}
                         </Button>
-                      ))
-                    ) : (
-                      <Typography>Select a date to see available slots.</Typography>
-                    )}
+                      ))}
+                    </Box>
                   </Box>
                 )}
               </CardContent>
+
               <CardActions>
                 <Button
                   variant="contained"
@@ -298,10 +342,9 @@ const handleBookAppointment = async (doctor) => {
         )}
       </Box>
 
+      {/* Dialog for booking messages */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogContent>
-          <Typography>{dialogMessage}</Typography>
-        </DialogContent>
+        <DialogContent>{dialogMessage}</DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
             Close

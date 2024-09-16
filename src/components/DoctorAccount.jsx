@@ -260,6 +260,7 @@ const DoctorAccount = () => {
                 shouldDisableDate={shouldDisableDate}
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} fullWidth />}
+                format="DD/MM/YYYY"
               />
             </StyledPaper>
 

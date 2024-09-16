@@ -27,10 +27,10 @@ const AddressSelector = ( {addOrderDetails}) => {
   const handleSelectChange = (event) => {
     const index = event.target.value;
     const selectedDeliveryAddress = addresses[index];
-    console.log(selectedDeliveryAddress);
     console.log("selected")
-    const deliveryAddress = 'deliveryAddress';
-    addOrderDetails(deliveryAddress,selectedDeliveryAddress);
+    console.log(selectedDeliveryAddress);
+    
+    addOrderDetails(selectedDeliveryAddress);
     setSelectedAddress(event.target.value);
     
   };

@@ -96,7 +96,7 @@ export default function UserDetailsTooltip({ children }) {
                 <Typography
                   style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
                   variant="body2"
-                  onClick={() => router.push('/orders')}
+                  onClick={() => router.push('/myorders')}
                 >
                   My Orders
                 </Typography>
@@ -120,7 +120,7 @@ export default function UserDetailsTooltip({ children }) {
                 <Typography
                   style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
                   variant="body2"
-                  onClick={() => router.push('/orders')}
+                  onClick={() => router.push('/myorders')}
                 >
                   My Orders
                 </Typography>

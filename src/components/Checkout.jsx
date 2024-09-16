@@ -1,26 +1,37 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation' 
 import { Stepper, Step, StepLabel, Button, Box, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import AddressSelector from './AddressSelector';
 import PaymentComponent from './PaymentComponent';
-
-const steps = ['Select Address', 'Select Payment Method', 'Review Items'];
+import { useCart } from '@/contexts/CardContext'
+import ReviewItems from './ReviewItems';
+const steps = ['Select Address', 'Select Payment Method', 'Review Your Order'];
 
 function Checkout() {
+  const { cartItems,addOrder} = useCart();
   const [activeStep, setActiveStep] = useState(0);
-  const [orderDetails,setOrderDetails] = useState([]);
+  const [delAddress, setDelAddress] = useState({});
+  const [paymentMethod,setPaymentMethod] = useState("");
+  const orderDetails={};
+  const router = useRouter();
 
-  function addOrderDetails(field, value) {
-    setOrderDetails((prev) => [
-      ...prev,            
-      { [field]: value } 
-    ]);
+ 
+
+  function addDelAddress(address) {
+    setDelAddress(() => address);
   }
+  function addPaymentMethod(method) {
+    setPaymentMethod(() => method);
+  }
+
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      console.log('Order submitted');
+      console.log("order submitted");
+
+      
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
@@ -30,10 +41,21 @@ function Checkout() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleSubmitOrder = () => {
+    // orderDetails = {
+    //   deliveryAddress: delAddress,
+    //   paymentMethod: paymentMethod,
+    //   items: cartItems,
+    // };
+    addOrder(delAddress, paymentMethod);
+
+    router.push('/submitOrder')
+
+  };
+
   return (
     
     <Box sx={{ width: '100%', marginTop:'10px' }}>
-        <h1>This is Work Under Progress</h1>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step 
@@ -45,25 +67,19 @@ function Checkout() {
       <div>
       {activeStep === 0 && (
         <div>
-          <AddressSelector addOrderDetails={addOrderDetails}/>
-          {
-            console.log("order details are:")
-          }
-          {
-          console.log(orderDetails)}
+          <AddressSelector addOrderDetails={addDelAddress}/>
           
         </div>
         )}
         {activeStep ===1 && (
           <div>
 
-           <PaymentComponent addOrderDetails={addOrderDetails} />
-           {
-            console.log("order detsia")
-           }
-           {
-            console.log(orderDetails)
-           }
+           <PaymentComponent addOrderDetails={addPaymentMethod} />
+           </div>
+        )}
+        {activeStep ===2 && (
+          <div>
+            <ReviewItems address={delAddress} paymentMethod={paymentMethod} />
            </div>
         )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2 }}>
@@ -77,16 +93,47 @@ function Checkout() {
           >
             Back
           </Button>
+          
+          {activeStep === steps.length - 1 ? 
           <Button
            sx={{
             backgroundColor: 'tertiary.main',
             color:"white"
           }}
             variant="contained"
-            onClick={handleNext}
+            onClick={handleSubmitOrder}
           >
-            {activeStep === steps.length - 1 ? 'Submit Order' : 'Next'}
-          </Button>
+            Submit Order
+            
+          </Button> : 
+            <Button
+            sx={{
+             backgroundColor: 'tertiary.main',
+             color:"white"
+           }}
+             variant="contained"
+             onClick={handleNext}
+           >
+            Next
+            
+           </Button>
+          }
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
         </Box>
       </div>
     </Box>

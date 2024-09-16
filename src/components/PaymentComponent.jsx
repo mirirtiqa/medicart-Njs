@@ -8,8 +8,7 @@ const PaymentComponent = ({addOrderDetails}) => {
 
   const handlePaymentMethodChange = (event) => {
     const method = event.target.value;
-    const paymentMethod = 'paymentMethod';
-    addOrderDetails(paymentMethod,method);
+    addOrderDetails(method);
     setSelectedPaymentMethod(event.target.value);
   };
 

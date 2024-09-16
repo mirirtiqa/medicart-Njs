@@ -11,6 +11,8 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isDoctorSignup, setIsDoctorSignup] = useState(false); // State to toggle between user and doctor signup
+  const [doctorPasswordPrompt, setDoctorPasswordPrompt] = useState(false); // State for password prompt
+  const [doctorPassword, setDoctorPassword] = useState(''); // State to store the doctor password input
 
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -123,6 +125,16 @@ export default function Signup() {
     }
   };
 
+  // Function to handle password protection before doctor signup
+  const handleDoctorSignup = () => {
+    if (doctorPassword === "MediCart") {
+      setIsDoctorSignup(true);
+      setDoctorPasswordPrompt(false);
+    } else {
+      setError('Incorrect password for doctor signup.');
+    }
+  };
+
   return (
     <Container component="main" maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Card sx={{ width: '100%', maxWidth: 400, color: "tertiary.main" }}>
@@ -213,21 +225,43 @@ export default function Signup() {
             </Typography>
           )}
 
-          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            {isDoctorSignup ? (
-              <>
-                Already have an account? <Button href="/login" variant="text">Log In</Button>
-              </>
-            ) : (
-              <>
-                Are you a doctor? <Button onClick={() => setIsDoctorSignup(true)} variant="text">Sign Up as Doctor</Button>
-              </>
-            )}
-          </Typography>
+          {doctorPasswordPrompt && (
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                label="Enter Doctor Signup Password"
+                type="password"
+                value={doctorPassword}
+                onChange={(e) => setDoctorPassword(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleDoctorSignup(); // Trigger the Confirm button click on Enter
+                  }
+                }}
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 2,mb: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+                onClick={handleDoctorSignup}
+              >
+                Confirm
+              </Button>
+            </Box>
+          )}
 
-          {isDoctorSignup && (
+
+          {!doctorPasswordPrompt && (
             <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-              <Button onClick={() => setIsDoctorSignup(false)} variant="text">Sign Up as User</Button>
+              {isDoctorSignup ? (
+                <>
+                  Already have an account? <Button href="/login" variant="text">Log In</Button>
+                </>
+              ) : (
+                <>
+                  Are you a doctor? <Button onClick={() => setDoctorPasswordPrompt(true)} variant="text">Sign Up as Doctor</Button>
+                </>
+              )}
             </Typography>
           )}
         </CardContent>

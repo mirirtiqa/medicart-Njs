@@ -144,7 +144,7 @@ export default function DoctorsPage() {
     }));
   };
 
-  const handleBookAppointment = async (doctor) => {
+const handleBookAppointment = async (doctor) => {
     const selectedAppointment = selectedAppointments[doctor.id];
 
     if (!currentUser) {
@@ -164,10 +164,20 @@ export default function DoctorsPage() {
       const appointmentId = `${currentUser.uid}_${doctor.id}_${date}_${time}`;
       const appointmentRef = doc(db, 'appointments', appointmentId);
 
-      // Store the appointment in a single collection
+      // Assume the user's name is available in currentUser.displayName or from user profile data
+      const patientsName = currentUser.displayName || 'Unknown Patient'; // Replace with the appropriate field if stored elsewhere
+      const patientsEmail = currentUser.email || 'Unknown Email';
+      
+      // Doctor's name comes from the doctor object
+      const doctorName = `Dr. ${doctor.name || 'Unknown Doctor'}`; // Replace with the correct field for the doctor's name
+
+      // Store the appointment in a single collection, with doctor and patient's names
       await setDoc(appointmentRef, {
         userId: currentUser.uid,
         doctorId: doctor.id,
+        doctorName, // Doctor's name
+        patientsName, // Patient's (user's) name
+        patientsEmail,
         date,
         time,
         status: 'Pending',
@@ -181,7 +191,7 @@ export default function DoctorsPage() {
       setOpenDialog(true);
     }
   };
-    
+
   
 
   const handleDialogClose = () => {

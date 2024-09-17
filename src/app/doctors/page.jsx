@@ -49,6 +49,7 @@ export default function DoctorsPage() {
   const [dialogMessage, setDialogMessage] = useState('');
   const [expandedDoctorId, setExpandedDoctorId] = useState(null);
   const { currentUser } = useAuth();
+  const [isDoctor, setIsDoctor] = useState(false);
 
   const fetchAllDoctors = async () => {
     setLoading(true);
@@ -70,6 +71,12 @@ export default function DoctorsPage() {
 
       const uniqueSpecializations = [...new Set(filteredResults.map((doctor) => doctor.specialization))];
       setSpecializations(uniqueSpecializations);
+      if (currentUser) {
+        const userDocRef = doc(db, 'doctors', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setIsDoctor(true);
+        }}
     } catch (error) {
       console.error('Error fetching doctors:', error);
       setError(error.message);
@@ -177,29 +184,36 @@ export default function DoctorsPage() {
   };
 
   const handleBookAppointment = async (doctor) => {
+    // Check if the logged-in user is a doctor
+    if (isDoctor) {
+      setDialogMessage('Doctors cannot book appointments.');
+      setOpenDialog(true);
+      return;
+    }
+  
     const selectedAppointment = selectedAppointments[doctor.id];
-
+  
     if (!currentUser) {
       setDialogMessage('Please log in to book an appointment.');
       setOpenDialog(true);
       return;
     }
-
+  
     if (!selectedAppointment || !selectedAppointment.date || !selectedAppointment.time) {
       setDialogMessage('Please select a date and time.');
       setOpenDialog(true);
       return;
     }
-
+  
     try {
       const { date, time } = selectedAppointment;
       const appointmentId = `${currentUser.uid}_${doctor.id}_${date}_${time}`;
       const appointmentRef = doc(db, 'appointments', appointmentId);
-
+  
       const patientsName = currentUser.displayName || 'Unknown Patient';
       const patientsEmail = currentUser.email || 'Unknown Email';
       const doctorName = `Dr. ${doctor.name || 'Unknown Doctor'}`;
-
+  
       await setDoc(appointmentRef, {
         userId: currentUser.uid,
         doctorId: doctor.id,
@@ -210,7 +224,7 @@ export default function DoctorsPage() {
         time,
         status: 'Pending',
       });
-
+  
       setDialogMessage('Appointment request sent successfully.');
       setOpenDialog(true);
     } catch (error) {
@@ -219,6 +233,7 @@ export default function DoctorsPage() {
       setOpenDialog(true);
     }
   };
+  
 
   const handleDialogClose = () => {
     setOpenDialog(false);

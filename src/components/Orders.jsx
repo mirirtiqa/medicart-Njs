@@ -53,9 +53,9 @@ export default function Orders() {
         <StyledCard key={order.id} variant="outlined">
           <CardContent>
             <OrderHeader>
-              <OrderDate variant="body1">
+              {/* <OrderDate variant="body1">
                 Order Placed: {order.orderDate.toDate().toDateString()}
-              </OrderDate>
+              </OrderDate> */}
               <TotalAmount variant="body1">
                 Total: ₹{order.items.reduce((acc, item) => acc + item.Price, 0)}
               </TotalAmount>
@@ -73,6 +73,7 @@ export default function Orders() {
                     ${order.deliveryAddress.country}`
                 
                 }</Typography>
+                {console.log(order.deliveryAddress)}
 
             <ItemDetails>
               {order.items.map((item, index) => (

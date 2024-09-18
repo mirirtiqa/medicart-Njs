@@ -24,7 +24,7 @@ export default function Signup() {
   const initializeUser = async (userId) => {
     try {
       const userDocRef = doc(db, "users", userId);
-      await setDoc(userDocRef, { itemsInCart: [], addresses: [] });
+      await setDoc(userDocRef, { itemsInCart: [], addresses: [], orders:[], appointments:[], });
       console.log("User profile initialized for:", userId);
     } catch (error) {
       console.error("Error initializing user profile:", error);

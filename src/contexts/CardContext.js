@@ -11,6 +11,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const { currentUser } = useAuth();
   
   const cartCollectionRef = collection(db, 'users');
@@ -29,6 +30,7 @@ export const CartProvider = ({ children }) => {
         setCartItems(cartDoc.data().itemsInCart || []);
         setAddresses(cartDoc.data().addresses || []);
         setOrders(cartDoc.data().orders || []);
+        setAppointments(cartDoc.data().appointments || []);
       }
     } catch (error) {
       console.error('Error loading cart:', error);

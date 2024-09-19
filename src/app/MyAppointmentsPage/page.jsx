@@ -2,12 +2,17 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import { useAuth } from '@/contexts/AuthContexts';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'; 
@@ -50,7 +55,14 @@ export default function MyAppointmentsPage() {
           })
       );
 
-      setAppointments(userAppointments);
+      // Sort appointments by Date and Time
+      const sortedAppointments = userAppointments.sort((a, b) => {
+        const dateA = dayjs(`${a.date} ${a.time}`);
+        const dateB = dayjs(`${b.date} ${b.time}`);
+        return dateA.isAfter(dateB) ? 1 : -1;
+      });
+
+      setAppointments(sortedAppointments);
     } catch (error) {
       console.error('Error fetching user appointments:', error);
     } finally {
@@ -85,40 +97,39 @@ export default function MyAppointmentsPage() {
   const upcomingAppointments = appointments.filter(appointment => dayjs(appointment.date).isSameOrAfter(now, 'day'));
   const pastAppointments = appointments.filter(appointment => dayjs(appointment.date).isBefore(now, 'day'));
 
-  const renderAppointments = (appointmentsList) => {
+  const renderAppointmentsTable = (appointmentsList) => {
     if (appointmentsList.length === 0) {
       return <Typography>No appointments.</Typography>;
     }
 
-    return appointmentsList.map((appointment) => {
-      const statusColor = getColorBasedOnStatus(appointment.status);
-
-      return (
-        <Card
-          key={appointment.id}
-          sx={{
-            width: '100%',
-            border: '2px solid black',
-            borderRadius: '10px',
-            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
-            padding: '10px',
-            backgroundColor: '#ffffff', // Keep the card background color consistent
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6" component="div">Appointment</Typography>
-            <Typography sx={{ padding: '0.5rem' }}>
-              Doctor: {appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`}
-            </Typography>
-            <Typography sx={{ padding: '0.5rem' }}>Date: {appointment.date}</Typography>
-            <Typography sx={{ padding: '0.5rem' }}>Time: {appointment.time}</Typography>
-            <Typography sx={{ padding: '0.5rem', color: statusColor }}>
-              Status: {appointment.status}
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    });
+    return (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><Typography fontWeight={'bold'}>Date</Typography></TableCell>
+              <TableCell><Typography fontWeight={'bold'}>Time</Typography></TableCell>
+              <TableCell><Typography fontWeight={'bold'}>Doctor Name</Typography></TableCell>
+              <TableCell><Typography fontWeight={'bold'}>Status</Typography></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {appointmentsList.map((appointment) => (
+              <TableRow key={appointment.id}>
+                <TableCell>{dayjs(appointment.date).format('DD/MM/YYYY')}</TableCell>
+                <TableCell>{appointment.time}</TableCell>
+                <TableCell>
+                  {appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`}
+                </TableCell>
+                <TableCell sx={{ color: getColorBasedOnStatus(appointment.status) }}>
+                  {appointment.status}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
   };
 
   return (
@@ -136,16 +147,16 @@ export default function MyAppointmentsPage() {
         <Tab label="Appointment History" />
       </Tabs>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', padding: '2rem' }}>
+      <Box sx={{ padding: '2rem' }}>
         {loading ? (
           <Typography>Loading...</Typography>
         ) : (
           <>
             {/* Display upcoming appointments if the first tab is selected */}
-            {tabValue === 0 && renderAppointments(upcomingAppointments)}
+            {tabValue === 0 && renderAppointmentsTable(upcomingAppointments)}
             
             {/* Display past appointments if the second tab is selected */}
-            {tabValue === 1 && renderAppointments(pastAppointments)}
+            {tabValue === 1 && renderAppointmentsTable(pastAppointments)}
           </>
         )}
       </Box>

@@ -49,16 +49,18 @@ export default function Orders() {
       <Typography variant="h4" gutterBottom>
         Your Orders
       </Typography>
-      {orders.map((order) => (
+      {orders.length >0 && orders.map((order) => (
         <StyledCard key={order.id} variant="outlined">
           <CardContent>
             <OrderHeader>
-              {/* <OrderDate variant="body1">
-                Order Placed: {order.orderDate.toDate().toDateString()}
-              </OrderDate> */}
-              <TotalAmount variant="body1">
-                Total: ₹{order.items.reduce((acc, item) => acc + item.Price, 0)}
-              </TotalAmount>
+              <OrderDate variant="body1">
+                Order Placed: {order.orderDate && order.orderDate.toDate && order.orderDate.toDate().toDateString()}
+              {console.log(order.orderDate,'1234')}
+              </OrderDate>
+              {order.items.length >0 && <TotalAmount variant="body1">
+               Total: ₹{order.items.reduce((acc, item) => acc + item.Price, 0)}
+              </TotalAmount>}
+              
             </OrderHeader>
             <Typography   variant="body2">Order ID: {order.id}</Typography>
             <Typography variant="body2">Shipping Address: {

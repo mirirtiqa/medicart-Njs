@@ -9,11 +9,11 @@ import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useAuth } from '@/contexts/AuthContexts';
-import dayjs from 'dayjs'; // Import dayjs
-import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import plugin for custom time parsing
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 
-// Extend dayjs with the customParseFormat plugin
+// Extend dayjs with the customParseFormat and isSameOrAfter plugins
 dayjs.extend(customParseFormat);
 dayjs.extend(isSameOrAfter);
 
@@ -43,9 +43,7 @@ export default function AppointmentRequestsPage() {
     const handleAppointmentStatus = async (appointmentId, newStatus) => {
         try {
             const appointmentRef = doc(db, 'appointments', appointmentId);
-            await updateDoc(appointmentRef, {
-                status: newStatus,
-            });
+            await updateDoc(appointmentRef, { status: newStatus });
             setAppointments(prevAppointments =>
                 prevAppointments.map(appointment =>
                     appointment.id === appointmentId ? { ...appointment, status: newStatus } : appointment
@@ -66,7 +64,6 @@ export default function AppointmentRequestsPage() {
         setTabValue(newValue);
     };
 
-    // Helper function to sort appointments by time using 24-hour format
     const sortAppointmentsByTime = (appointments) => {
         return appointments.sort((a, b) => {
             const timeA = dayjs(a.time, 'hh:mm A').format('HH:mm');
@@ -75,13 +72,11 @@ export default function AppointmentRequestsPage() {
         });
     };
 
-    // Helper function to format date in DD/MM/YYYY format
     const formatDate = (dateString) => {
         const [year, month, day] = dateString.split('-');
         return `${day}/${month}/${year}`;
     };
 
-    // Helper function to group appointments by date
     const groupAppointmentsByDate = (appointments) => {
         return appointments.reduce((groups, appointment) => {
             const date = appointment.date;
@@ -99,7 +94,6 @@ export default function AppointmentRequestsPage() {
                 Appointments Management
             </Typography>
 
-            {/* Tabs for switching between Appointment Requests and Confirmed Appointments */}
             <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
                 <Tabs
                     value={tabValue}
@@ -118,7 +112,7 @@ export default function AppointmentRequestsPage() {
                     <Typography>No appointments available.</Typography>
                 ) : (
                     <>
-                        {/* Display sorted appointments for Appointment Requests */}
+                        {/* Appointment Requests */}
                         {tabValue === 0 && (
                             <>
                                 <Box
@@ -196,70 +190,86 @@ export default function AppointmentRequestsPage() {
                             </>
                         )}
 
-                        {/* Display sorted appointments for Confirmed Appointments */}
-                        {tabValue === 1 &&
-                            Object.entries(groupAppointmentsByDate(
-                                appointments
-                                    .filter(appointment =>
+                        {/* Confirmed Appointments */}
+                        {tabValue === 1 && (
+                            <>
+                                {Object.entries(groupAppointmentsByDate(
+                                    appointments.filter(appointment =>
                                         appointment.status === 'Accepted' &&
                                         dayjs(appointment.date, 'YYYY-MM-DD').isSameOrAfter(dayjs(), 'day')
                                     )
-                            )).map(([date, appointmentsForDate]) => (
-                                <Box key={date}>
-                                    {/* Sticky Date Header */}
-                                    <Box
-                                        sx={{
-                                            position: 'sticky',
-                                            top: 0,
-                                            backgroundColor: '#fff',
-                                            zIndex: 1,
-                                            padding: '1rem',
-                                            borderBottom: '2px solid black',
-                                        }}
-                                    >
-                                        <Typography variant="body1" color="textSecondary">
-                                            Date: {formatDate(date)}
-                                        </Typography>
-                                    </Box>
-
-                                    {/* Render appointments for this date */}
-                                    {sortAppointmentsByTime(appointmentsForDate).map((appointment) => (
-                                        <Card
-                                            key={appointment.id}
+                                )).map(([date, appointmentsForDate]) => (
+                                    <Box key={date}>
+                                        <Box
                                             sx={{
-                                                width: '100%',
-                                                border: '2px solid black',
-                                                borderRadius: '10px',
-                                                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
-                                                padding: '10px',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                marginTop: '1rem',
+                                                position: 'sticky',
+                                                top: 0,
+                                                backgroundColor: '#fff',
+                                                zIndex: 1,
+                                                padding: '1rem',
+                                                borderBottom: '2px solid black',
+                                                marginBottom: '1rem',
                                             }}
                                         >
-                                            <Box
+                                            <Typography variant="body1" color="textSecondary">
+                                                Date: {formatDate(date)}
+                                            </Typography>
+                                        </Box>
+
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr 1fr 1fr',
+                                                gap: '1rem',
+                                                marginBottom: '1rem',
+                                                backgroundColor: '#f0f0f0',
+                                                padding: '1rem',
+                                                borderBottom: '2px solid black',
+                                            }}
+                                        >
+                                            <Typography fontWeight="bold">Time</Typography>
+                                            <Typography fontWeight="bold">Patient's Name</Typography>
+                                            <Typography fontWeight="bold">Patient's Email</Typography>
+                                        </Box>
+
+                                        {sortAppointmentsByTime(appointmentsForDate).map((appointment) => (
+                                            <Card
+                                                key={appointment.id}
                                                 sx={{
-                                                    display: 'grid',
-                                                    gridTemplateColumns: '1fr 1fr 1fr',
                                                     width: '100%',
+                                                    border: '2px solid black',
+                                                    borderRadius: '10px',
+                                                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
+                                                    padding: '10px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    marginTop: '1rem',
                                                 }}
                                             >
-                                                <Typography sx={{ padding: '0.5rem' }}>
-                                                    {appointment.time}
-                                                </Typography>
-                                                <Typography sx={{ padding: '0.5rem' }}>
-                                                    {appointment.patientsName}
-                                                </Typography>
-                                                <Typography sx={{ padding: '0.5rem' }}>
-                                                    {appointment.patientsEmail}
-                                                </Typography>
-                                            </Box>
-                                        </Card>
-                                    ))}
-                                </Box>
-                            ))
-                        }
+                                                <Box
+                                                    sx={{
+                                                        display: 'grid',
+                                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                                        width: '100%',
+                                                    }}
+                                                >
+                                                    <Typography sx={{ padding: '0.5rem' }}>
+                                                        {appointment.time}
+                                                    </Typography>
+                                                    <Typography sx={{ padding: '0.5rem' }}>
+                                                        {appointment.patientsName}
+                                                    </Typography>
+                                                    <Typography sx={{ padding: '0.5rem' }}>
+                                                        {appointment.patientsEmail}
+                                                    </Typography>
+                                                </Box>
+                                            </Card>
+                                        ))}
+                                    </Box>
+                                ))}
+                            </>
+                        )}
                     </>
                 )}
             </Box>

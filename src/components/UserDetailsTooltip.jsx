@@ -105,14 +105,14 @@ export default function UserDetailsTooltip({ children }) {
                   variant="body2"
                   onClick={() => router.push('/AppointmentRequestsPage')}
                 >
-                  Appointment Requests
+                  Appointment Management
                 </Typography>
                 <Typography
                   style={{ cursor: 'pointer', color: 'primary', margin: 8, padding: 5, fontWeight: 'bold' }}
                   variant="body2"
                   onClick={() => router.push('/myaccount')}
                 >
-                  Account Settings
+                  My Account
                 </Typography>
               </>
             ) : (

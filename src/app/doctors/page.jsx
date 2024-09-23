@@ -262,29 +262,43 @@ export default function DoctorsPage() {
         </CustomFormControl>
       </Box>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '4rem', padding: '3rem' }}>
+      <Box
+  sx={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: {
+      xs: 'center', // For small screens
+      sm: 'center', // For medium screens
+      md: 'center', // For medium-large screens (up to 1200px)
+      lg: 'center', // For screens between 1200px and 1375px
+      xl: 'flex-start', // For screens above 1375px
+    }, // Center on small and medium, flex-start on big
+    gap: '4rem',
+    padding: { xs: '1rem', sm: '2rem', md: '3rem' },
+  }}
+>
         {filteredDoctors.length === 0 ? (
           <Typography variant="h6">No doctors available.</Typography>
         ) : (
           filteredDoctors.map((doctor) => (
             <Card
-              key={doctor.id}
-              sx={{
-                width: expandedDoctorId === doctor.id ? '40%' : '30%',
-                marginBottom: '20px',
-                border: '2px solid black',
-                borderRadius: '10px',
-                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
-                padding: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'transform 0.3s ease, max-height 0.3s ease', // Smooth transition
-                transform: expandedDoctorId === doctor.id ? 'scale(1.05)' : 'scale(1)', // Scaling effect on expansion
-                maxHeight: expandedDoctorId === doctor.id ? '1000px' : '400px', // Expand smoothly on click
-                overflow: 'hidden',
-              }}
-            >
+        key={doctor.id}
+        sx={{
+          width: { xs: '100%', md: '45%', lg: '20%' },
+          marginBottom: '20px',
+          border: '2px solid black',
+          borderRadius: '10px',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
+          padding: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          transition: 'transform 0.3s ease, max-height 0.3s ease',
+          transform: expandedDoctorId === doctor.id ? 'scale(1.05)' : 'scale(1)',
+          maxHeight: expandedDoctorId === doctor.id ? '1000px' : '400px',
+          overflow: 'hidden',
+        }}
+      >
               <CardContent>
                 <Typography variant="h5" fontWeight={'bold'} gutterBottom>
                   Dr. {doctor.name}

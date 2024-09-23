@@ -161,7 +161,7 @@ const DoctorAccount = () => {
     const today = dayjs();
     const isMoreThanAWeekAway = date.isAfter(today.add(7, 'day'));
     const isPastDate = date.isBefore(today, 'day'); // Disable past dates
-  
+
     return isSunday || isMoreThanAWeekAway || isPastDate;
   };
 
@@ -270,7 +270,7 @@ const DoctorAccount = () => {
                   control={<Checkbox checked={selectAll} onChange={handleSelectAll} />}
                   label="Select All"
                 />
-                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' }, gap: 1 }}>
                   {timeSlots.map((slot, index) => (
                     <FormControlLabel
                       key={index}
@@ -290,10 +290,10 @@ const DoctorAccount = () => {
           </Grid>
 
           {/* Buttons on the same line */}
-          <Grid item xs={12} sx={{ mb: 3, display: 'flex', justifyContent: 'space-around' }}>
+          <Grid item xs={12} sx={{ mb: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-around', alignItems: 'center', gap: 2 }}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main', width: { xs: '100%', sm: 'auto' } }}
               onClick={handleDoctorUpdate}
             >
               Update Doctor Details
@@ -301,7 +301,7 @@ const DoctorAccount = () => {
 
             <Button
               variant="contained"
-              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+              sx={{ backgroundColor: 'tertiary.main', color: 'secondary.main', width: { xs: '100%', sm: 'auto' } }}
               onClick={handleAvailabilityUpdate}
             >
               Update Availability

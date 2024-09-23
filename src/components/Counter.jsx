@@ -8,10 +8,10 @@ const StyledButton = styled.button`
   color: #01D6A3;
   border-radius: 1px;
   cursor: pointer;
-  &:hover {
-    background-color:#01D6A3;
-    color:white;
-  }
+  // &:hover {
+  //   background-color:#01D6A3;
+  //   color:white;
+  // }
 `;
 const Counter = ({ item, updateQuantity,removeFromCart }) => {
   const [quantity, setQuantity] = useState(item.quantity);

@@ -20,7 +20,7 @@ const AddressSelector = ( {addOrderDetails}) => {
         addToAddresses(address)
       };
 
-  const [selectedAddress, setSelectedAddress] = useState({});
+  const [selectedAddress, setSelectedAddress] = useState(0);
 
 
  

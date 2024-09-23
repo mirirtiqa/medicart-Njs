@@ -34,6 +34,11 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
   };
 
   const handleSave = () => {
+    const { country, fullName, mobileNumber, pincode, flat, area, landmark, city, state } = formData;
+    if (!fullName || !mobileNumber || !pincode || !flat || !area || !landmark || !city || !state) {
+      alert("Please fill out all required fields");
+      return;
+    }
     const addressString = `
       Country: ${formData.country}, 
       Full Name: ${formData.fullName}, 
@@ -69,6 +74,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               value={formData.country}
               onChange={handleChange}
               name="country"
+              required
             >
               <MenuItem value="India">India</MenuItem>
             </Select>
@@ -81,6 +87,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -91,6 +98,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="mobileNumber"
               value={formData.mobileNumber}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -101,6 +109,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="pincode"
               value={formData.pincode}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -111,6 +120,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="flat"
               value={formData.flat}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -121,6 +131,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="area"
               value={formData.area}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -131,6 +142,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="landmark"
               value={formData.landmark}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={6}>
@@ -141,6 +153,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               name="city"
               value={formData.city}
               onChange={handleChange}
+              required
             />
           </Grid>
           <Grid item xs={6}>
@@ -148,6 +161,7 @@ const AddAddressDialog = ({ open, onClose, addToAddresses }) => {
               fullWidth
               value={formData.state}
               onChange={handleChange}
+              required
               name="state"
             >
               <MenuItem value="">Choose a state</MenuItem>

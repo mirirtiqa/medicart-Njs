@@ -113,7 +113,7 @@ export default function MedicineCard() {
     fetchAllMedicines();
   }, []);
 
-  // Handle category checkbox change
+
   const handleCategoryChange = (category) => {
     setFilteredCategories((prev) =>
       prev.includes(category)

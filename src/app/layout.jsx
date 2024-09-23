@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContexts";
 import { CartProvider } from "@/contexts/CardContext";
 import Header from "@/components/Header1/page";
 import MUIHeaderMenu from "@/components/Header/MUIHeaderMenu";
+import Search from "@/components/Search";
 export const metadata = {
   title: "MediCart",
   description: "One stop shop for your mediccal needs",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
                 <CartProvider>
                 <div>
                   <Header />
+              
                   <MUIHeaderMenu />
                   {children}
                 </div>

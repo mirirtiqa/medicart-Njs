@@ -48,7 +48,7 @@ const Counter = ({ item, updateQuantity,removeFromCart }) => {
 
   return (
    
-    <div style={{border: "1px solid #01D6A3"}}>
+    <div style={{border: "1px solid #01D6A3", width:'6.5rem'}}>
       <StyledButton onClick={handlePlus}>+</StyledButton>
       <input
         value={quantity}

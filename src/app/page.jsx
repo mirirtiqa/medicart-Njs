@@ -9,6 +9,7 @@ import OffersAndTrending from "@/components/OffersAndTrending/page";
 import CardGrid from "@/components/Categories/page";
 import MUIHeaderMenu from "@/components/Header/MUIHeaderMenu";
 import MUIHero from "@/components/MUIHero";
+import HeroSection from "@/components/HeroVideo";
 
 export default function Home() {
   return (
@@ -16,7 +17,8 @@ export default function Home() {
      
       {/* <Header/> */}
       {/* <MUIHeaderMenu/> */}
-      <MUIHero/>
+      {/* <MUIHero/> */}
+      <HeroSection/>
       {/* <Hero/> */}
       <CardGrid/>
       <OffersAndTrending/>

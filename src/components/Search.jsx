@@ -66,7 +66,7 @@ const Search = () => {
         sx={{
           width:'30rem',
           bgcolor:'white',
-          margin:'1rem',
+          // margin:'1rem',
           borderRadius:'0.4rem'
         }}
         freeSolo

@@ -40,7 +40,7 @@ const Header = () => {
           }}
         >
           <Link
-            href="https://www.google.com/maps/place/Doctor's+Office+Location"
+            href="https://www.google.com/maps/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Google Maps"

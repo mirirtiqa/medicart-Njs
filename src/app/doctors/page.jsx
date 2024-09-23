@@ -76,7 +76,8 @@ export default function DoctorsPage() {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           setIsDoctor(true);
-        }}
+        }
+      }
     } catch (error) {
       console.error('Error fetching doctors:', error);
       setError(error.message);
@@ -190,30 +191,30 @@ export default function DoctorsPage() {
       setOpenDialog(true);
       return;
     }
-  
+
     const selectedAppointment = selectedAppointments[doctor.id];
-  
+
     if (!currentUser) {
       setDialogMessage('Please log in to book an appointment.');
       setOpenDialog(true);
       return;
     }
-  
+
     if (!selectedAppointment || !selectedAppointment.date || !selectedAppointment.time) {
       setDialogMessage('Please select a date and time.');
       setOpenDialog(true);
       return;
     }
-  
+
     try {
       const { date, time } = selectedAppointment;
       const appointmentId = `${currentUser.uid}_${doctor.id}_${date}_${time}`;
       const appointmentRef = doc(db, 'appointments', appointmentId);
-  
+
       const patientsName = currentUser.displayName || 'Unknown Patient';
       const patientsEmail = currentUser.email || 'Unknown Email';
       const doctorName = `Dr. ${doctor.name || 'Unknown Doctor'}`;
-  
+
       await setDoc(appointmentRef, {
         userId: currentUser.uid,
         doctorId: doctor.id,
@@ -224,7 +225,7 @@ export default function DoctorsPage() {
         time,
         status: 'Pending',
       });
-  
+
       setDialogMessage('Appointment request sent successfully.');
       setOpenDialog(true);
     } catch (error) {
@@ -233,7 +234,7 @@ export default function DoctorsPage() {
       setOpenDialog(true);
     }
   };
-  
+
 
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -263,42 +264,41 @@ export default function DoctorsPage() {
       </Box>
 
       <Box
-  sx={{
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: {
-      xs: 'center', // For small screens
-      sm: 'center', // For medium screens
-      md: 'center', // For medium-large screens (up to 1200px)
-      lg: 'center', // For screens between 1200px and 1375px
-      xl: 'flex-start', // For screens above 1375px
-    }, // Center on small and medium, flex-start on big
-    gap: '4rem',
-    padding: { xs: '1rem', sm: '2rem', md: '3rem' },
-  }}
->
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: {
+            xs: 'center', // For small screens
+            sm: 'center', // For medium screens
+            md: 'center', // For medium-large screens (up to 1200px)
+            lg: 'center', // For screens between 1200px and 1375px
+          }, // Center on small and medium, flex-start on big
+          gap: '4rem',
+          padding: { xs: '1rem', sm: '2rem', md: '3rem' },
+        }}
+      >
         {filteredDoctors.length === 0 ? (
           <Typography variant="h6">No doctors available.</Typography>
         ) : (
           filteredDoctors.map((doctor) => (
             <Card
-        key={doctor.id}
-        sx={{
-          width: { xs: '100%', md: '45%', lg: '20%' },
-          marginBottom: '20px',
-          border: '2px solid black',
-          borderRadius: '10px',
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
-          padding: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          transition: 'transform 0.3s ease, max-height 0.3s ease',
-          transform: expandedDoctorId === doctor.id ? 'scale(1.05)' : 'scale(1)',
-          maxHeight: expandedDoctorId === doctor.id ? '1000px' : '400px',
-          overflow: 'hidden',
-        }}
-      >
+              key={doctor.id}
+              sx={{
+                width: { xs: '100%', md: '45%', lg: '20%' },
+                marginBottom: '20px',
+                border: '2px solid black',
+                borderRadius: '10px',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
+                padding: '10px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                transition: 'transform 0.3s ease, max-height 0.3s ease',
+                transform: expandedDoctorId === doctor.id ? 'scale(1.05)' : 'scale(1)',
+                maxHeight: expandedDoctorId === doctor.id ? '1000px' : '400px',
+                overflow: 'hidden',
+              }}
+            >
               <CardContent>
                 <Typography variant="h5" fontWeight={'bold'} gutterBottom>
                   Dr. {doctor.name}

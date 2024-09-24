@@ -12,6 +12,7 @@ import { getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
 import { medColRef } from '@/lib/firebase';
 import Counter from '@/components/Counter';
+import Search from './Search';
 
 
 
@@ -28,13 +29,15 @@ const FilterPane = styled.div`
   margin-right: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display:flex;
+  flex-direction:column;
 `;
 
 const MedicinesContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 40px; /* Space between categories */
+  gap: 40px; 
 `;
 
 const CategoryRow = styled.div`
@@ -129,8 +132,9 @@ export default function MedicineCard() {
 
   return (
     <Container>
-      {/* Filter Pane */}
+     
       <FilterPane>
+        <Search width='100%'/>
         <Typography variant="h6" gutterBottom>
           Filter by Category
         </Typography>

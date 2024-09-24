@@ -52,7 +52,7 @@ const HeroSection = () => {
                 <h1 className="text-3xl md:text-5xl font-extrabold">for your needs</h1>
                 <p className="text-slate-400 text-base md:text-lg">{heroSection.description}</p>
             </div>
-            <Search/>
+            <Search width='50%'/>
             
 
         </div>  

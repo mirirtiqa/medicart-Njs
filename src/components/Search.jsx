@@ -15,7 +15,7 @@ const SearchContainer = styled.div`
 `;
 
 
-const Search = () => {
+const Search = ({width}) => {
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const router = useRouter();
@@ -87,13 +87,13 @@ const Search = () => {
             alignItems: 'center',
             padding:'0',
             // gap: { xs: 2, sm: 4 },
-            maxWidth: '50%',
+            maxWidth: '100%',
             // margin: '0 auto'
           }}
         >
         <Autocomplete
         sx={{
-          width:'30rem',
+          width:`${width}` || '50%',
           bgcolor:'white',
           // margin:'1rem',
           borderRadius:'0.4rem'

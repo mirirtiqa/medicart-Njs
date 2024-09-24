@@ -20,34 +20,63 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
   const router = useRouter();
 
-  // Firebase search function
-  const handleSearch = async () => {
+ 
+  const handleSearch = async () => { 
     if (!searchInput.trim()) return;
-
+  
     try {
+
+      const doctorsRef = collection(db, 'doctors');
+      const docQuery = query(doctorsRef, where('name', '>=', searchInput));
+      const docQuerySnapshot = await getDocs(docQuery);
+  
       const medicinesRef = collection(db, 'medicines');
-      const q = query(medicinesRef, where('Name', '>=', searchInput));  
-      const querySnapshot = await getDocs(q);
-
+      const medQuery = query(medicinesRef, where('Name', '>=', searchInput));
+      const medQuerySnapshot = await getDocs(medQuery);
+  
+      
+  
       const results = [];
-      querySnapshot.forEach((doc) => {
-        results.push({ id: doc.id, ...doc.data() });
+  
+     
+      medQuerySnapshot.forEach((doc) => {
+        results.push({ id: doc.id, type: 'medicine', ...doc.data() });
       });
-
+  
+    
+      docQuerySnapshot.forEach((doc) => {
+        results.push({ id: doc.id, type: 'doctor', ...doc.data() });
+      });
+  
       setSearchResults(results);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
+
+  
   const handleSelect = (event, selectedOption) => {
     if (selectedOption) {
-      router.push(`/medicine/${selectedOption.id}`); 
+      if (selectedOption.type === 'medicine') {
+        router.push(`/medicine/${selectedOption.id}`); 
+      } else if (selectedOption.type === 'doctor') {
+        router.push(`/doctors/${selectedOption.id}`); 
+      }
     }
   };
+  
 
   useEffect(() => {
     handleSearch();
   }, [searchInput]);
+
+  const getDisplayName = (option) => {
+    if (option.type === 'doctor') {
+      return option.name; 
+    } else {
+      return option.Name; 
+    }
+  };
 
   return (
   
@@ -71,7 +100,7 @@ const Search = () => {
         }}
         freeSolo
         options={searchResults}
-        getOptionLabel={(option) => option.Name}
+        getOptionLabel={(option )=> getDisplayName(option) }
         onInputChange={(event, newInputValue) => {
           setSearchInput(newInputValue);
           handleSearch(newInputValue);
@@ -110,36 +139,3 @@ const Search = () => {
 };
 
 export default Search;
-
- {/* <TextField
-        variant="outlined"
-        fullWidth
-        placeholder="Search for medicines..."
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-   
-      {searchInput && searchResults.length > 0 && (
-        <SearchResults>
-        {searchResults.length > 0 && (
-          <List>
-            {searchResults.map((medicine, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={medicine.Name} />
-              </ListItem>
-            ))}
-          </List>
-        ) 
-       
-        }
-      </SearchResults>
-
-      )} */}

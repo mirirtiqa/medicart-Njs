@@ -43,6 +43,7 @@ export default function ReviewItems({ address,paymentMethod }) {
 
     const { cartItems} = useCart();
 
+
  
   const totalAmount = cartItems.reduce((acc, item) => acc + item.Price * item.quantity, 0);
 

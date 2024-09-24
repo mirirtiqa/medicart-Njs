@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CardContext';
-import { AppBar, Toolbar, IconButton, Box, Button as MuiButton } from '@mui/material';
+import { useMediaQuery,Drawer,AppBar, Toolbar, IconButton, Box, Button as MuiButton , List, ListItem} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
@@ -24,6 +24,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function MUIHeaderMenu() {
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const { currentUser, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -74,6 +76,42 @@ export default function MUIHeaderMenu() {
           <MenuIcon />
         </IconButton>
 
+        {menuOpen && (
+        <List 
+          sx={{ 
+            display: { xs: 'block', md: 'none' },  
+            position: 'absolute',  
+            top: '50px',  
+            left: 0, 
+            width: '100%', 
+            backgroundColor: 'background.paper',
+            zIndex: 10 
+          }}
+        >
+          {HeaderMenuOptions.map((option) => (
+            <ListItem key={option.key} disablePadding>
+              <MuiButton
+                fullWidth
+                color="inherit"
+                sx={{
+                  textAlign: 'left',
+                  '&:hover': {
+                    color: 'tertiary.main',
+                    cursor: 'pointer',
+                  },
+                }}
+                onClick={() => {
+                  handleNavigation(option.route)
+                  setMenuOpen(!menuOpen);
+                }}
+              >
+                {option.label}
+              </MuiButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
+
         {/* Header Menu */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, ml: 4 }}>
           {HeaderMenuOptions.map((option) => (
@@ -99,7 +137,7 @@ export default function MUIHeaderMenu() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <UserDetailsTooltip useremail={currentUser.email}>
                 {currentUser.photoURL ? (
-                  <Avatar alt="user picture" src={currentUser.photoURL} sx={{cursor : 'pointer'}}/>
+                  <Avatar alt="user picture" src={currentUser.photoURL} sx={{cursor : 'pointer'}} onClick={() => isMobile && setIsFilterDrawerOpen(true)}/>
                 ) : (
                   <IconButton color="inherit"
                     sx={{
@@ -108,7 +146,7 @@ export default function MUIHeaderMenu() {
                       },
                     }}
                   >
-                    <PersonIcon />
+                    <PersonIcon onClick={() => isMobile && setIsFilterDrawerOpen(true)} />
                   </IconButton>
                 )}
               </UserDetailsTooltip>

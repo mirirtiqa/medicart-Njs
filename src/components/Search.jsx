@@ -84,7 +84,7 @@ const Search = ({width}) => {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: 'center',
+            alignItems: 'left',
             padding:'0',
             // gap: { xs: 2, sm: 4 },
             maxWidth: '100%',
@@ -93,7 +93,7 @@ const Search = ({width}) => {
         >
         <Autocomplete
         sx={{
-          width:`${width}` || '50%',
+          width:{sm:`${width}` || '50%', xs: '100%'},
           bgcolor:'white',
           // margin:'1rem',
           borderRadius:'0.4rem'

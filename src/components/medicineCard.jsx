@@ -1,25 +1,19 @@
-
 'use client';
 import { useCart } from '@/contexts/CardContext';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { getDocs } from 'firebase/firestore';
+import { useMediaQuery, Typography, Button, Drawer, Box,Card,CardMedia,CardContent,CardActions } from '@mui/material';
 import styled from 'styled-components';
 import { medColRef } from '@/lib/firebase';
 import Counter from '@/components/Counter';
 import Search from './Search';
 
-
-
-
 const Container = styled.div`
   display: flex;
   padding: 20px;
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
 `;
 
 const FilterPane = styled.div`
@@ -29,8 +23,8 @@ const FilterPane = styled.div`
   margin-right: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
 `;
 
 const MedicinesContainer = styled.div`
@@ -42,16 +36,19 @@ const MedicinesContainer = styled.div`
 
 const CategoryRow = styled.div`
   display: flex;
+  flex-direction:row;
   flex-wrap: nowrap;
   overflow-x: auto;
   gap: 16px;
+    @media (max-width: 600px) {
+    flex-direction: column;
+  }
 `;
 
 const StyledCard = styled(Card)`
   min-width: 300px;
   flex: 0 0 auto;
   border: 1px solid black;
-  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
 `;
 
 const StyledCardMedia = styled(CardMedia)`
@@ -71,9 +68,9 @@ const CategoryBanner = styled.div`
   background-color: #01D6A3;
   padding: 10px;
   color: white;
-  // text-align: center;
   border-radius: 5px;
   margin-bottom: 20px;
+  width:100%;
 `;
 
 export default function MedicineCard() {
@@ -82,7 +79,11 @@ export default function MedicineCard() {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { cartItems, removeFromCart, updateQuantity, clearCart,addToCart } = useCart();
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const { cartItems, removeFromCart, updateQuantity, clearCart, addToCart } = useCart();
+  
+
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
   const fetchAllMedicines = async () => {
     setLoading(true);
@@ -92,7 +93,6 @@ export default function MedicineCard() {
       querySnapshot.forEach((doc) => {
         medicines.push({ id: doc.id, ...doc.data() });
       });
-
       
       const groupedByCategory = medicines.reduce((acc, medicine) => {
         const { Category } = medicine;
@@ -116,7 +116,6 @@ export default function MedicineCard() {
     fetchAllMedicines();
   }, []);
 
-
   const handleCategoryChange = (category) => {
     setFilteredCategories((prev) =>
       prev.includes(category)
@@ -125,33 +124,70 @@ export default function MedicineCard() {
     );
   };
 
-  
   const displayedCategories = filteredCategories.length
     ? filteredCategories
     : allCategories;
 
-  return (
+  return (<>
+    
     <Container>
-     
-      <FilterPane>
-        <Search width='100%'/>
-        <Typography variant="h6" gutterBottom>
-          Filter by Category
-        </Typography>
-        {allCategories.map((category) => (
-          <div key={category}>
-            <input
-              type="checkbox"
-              id={category}
-              checked={filteredCategories.includes(category)}
-              onChange={() => handleCategoryChange(category)}
-            />
-            <label htmlFor={category} style={{ marginLeft: '8px' }}>
-              {category}
-            </label>
-          </div>
-        ))}
-      </FilterPane>
+    {isMobile && (
+      <>
+          <Button
+            variant="outlined"
+            onClick={() => setIsFilterDrawerOpen(true)}
+            sx={{ marginBottom: '20px',width:'100%',bgcolor:'white',color:'tertiary.main',borderColor:'tertiary.main',borderRadius:'0' }}
+          >
+            Filter
+          </Button>
+          <Drawer
+            anchor="left"
+            open={isFilterDrawerOpen}
+            onClose={() => setIsFilterDrawerOpen(false)}
+          >
+            <Box sx={{ width: 250, padding: 2 }}>
+              <Search width="100%" />
+              <Typography variant="h6" gutterBottom>
+                Filter by Category
+              </Typography>
+              {allCategories.map((category) => (
+                <div key={category}>
+                  <input
+                    type="checkbox"
+                    id={category}
+                    checked={filteredCategories.includes(category)}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                  <label htmlFor={category} style={{ marginLeft: '8px' }}>
+                    {category}
+                  </label>
+                </div>
+              ))}
+            </Box>
+          </Drawer>
+        </>
+    )}
+      {!isMobile && (
+        <FilterPane>
+          <Search width="100%" />
+          <Typography variant="h6" gutterBottom>
+            Filter by Category
+          </Typography>
+          {allCategories.map((category) => (
+            <div key={category}>
+              <input
+                type="checkbox"
+                id={category}
+                checked={filteredCategories.includes(category)}
+                onChange={() => handleCategoryChange(category)}
+              />
+              <label htmlFor={category} style={{ marginLeft: '8px' }}>
+                {category}
+              </label>
+            </div>
+          ))}
+        </FilterPane>
+      )}
 
       {/* Medicines Display */}
       <MedicinesContainer>
@@ -161,7 +197,7 @@ export default function MedicineCard() {
           displayedCategories.map((category) => (
             <CategorySection key={category}>
               <CategoryBanner>
-                <Typography variant="h5">{category}</Typography>
+                <Typography variant="h5" sx={{width:{xs:'100%'}}}>{category}</Typography>
               </CategoryBanner>
               <CategoryRow>
                 {medicinesByCategory[category].map((medicine) => (
@@ -178,44 +214,44 @@ export default function MedicineCard() {
                         {medicine.Description}
                       </StyledTypography>
                     </CardContent>
-                    <CardActions sx={{display:"flex",flexDirection:"column",alignItems:"start",gap:'2px'}}>
+                    <CardActions sx={{ display: "flex", flexDirection: "column", alignItems: "start", gap: '2px' }}>
                       <div>
-                      <Typography variant="subtitle2" sx={{marginLeft:'3px',fontSize:'1rem'}}>
-                        {'\u20B9'} {medicine.Price} MRP
-                      </Typography>
+                        <Typography variant="subtitle2" sx={{ marginLeft: '3px', fontSize: '1rem' }}>
+                          {'\u20B9'} {medicine.Price} MRP
+                        </Typography>
                       </div>
                       <div>
-                      {showCounter && (
-
-  (() => {
-    const i = cartItems.find((item) => item.id === medicine.id);
-    
-    
-    return i ? (
-      <Counter 
-        item={i}
-        updateQuantity={updateQuantity}
-        removeFromCart={removeFromCart} 
-      />
-    ) : null; 
-  })()
-)}
-
-
-                      <Button size="small" sx={{
-              backgroundColor: 'tertiary.main',
-              color: 'white',
-              marginTop:'3px',
-              width: '100%',
-              '&:hover': { bgcolor: 'white', color: 'tertiary.main' }
-            }} onClick={() => {
-              addToCart(medicine);
-              if (!showCounter) {
-                setShowCounter(true); 
-              }
-              console.log("item added")
-            }}>Add to Cart</Button>
-                    </div>
+                        {showCounter && (
+                          (() => {
+                            const i = cartItems.find((item) => item.id === medicine.id);
+                            return i ? (
+                              <Counter
+                                item={i}
+                                updateQuantity={updateQuantity}
+                                removeFromCart={removeFromCart}
+                              />
+                            ) : null;
+                          })()
+                        )}
+                        <Button
+                          size="small"
+                          sx={{
+                            backgroundColor: 'tertiary.main',
+                            color: 'white',
+                            marginTop: '3px',
+                            width: '100%',
+                            '&:hover': { bgcolor: 'white', color: 'tertiary.main' }
+                          }}
+                          onClick={() => {
+                            addToCart(medicine);
+                            if (!showCounter) {
+                              setShowCounter(true);
+                            }
+                          }}
+                        >
+                          Add to Cart
+                        </Button>
+                      </div>
                     </CardActions>
                   </StyledCard>
                 ))}
@@ -225,7 +261,6 @@ export default function MedicineCard() {
         )}
       </MedicinesContainer>
     </Container>
+    </>
   );
 }
-
-

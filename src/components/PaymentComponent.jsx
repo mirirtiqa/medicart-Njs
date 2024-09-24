@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Button, FormControl, FormControlLabel, Radio, RadioGroup, TextField, Typography, MenuItem, Select, InputLabel } from '@mui/material';
 
 const PaymentComponent = ({addOrderDetails}) => {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState('card');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState('cod');
   const [selectedCard, setSelectedCard] = React.useState('');
 
   const handlePaymentMethodChange = (event) => {
@@ -17,7 +17,7 @@ const PaymentComponent = ({addOrderDetails}) => {
   };
 
   return (
-    <Box sx={{ padding: 3,  maxWidth: 600, margin: 'auto',marginTop:'1rem', border: '1px solid #ccc', borderRadius: 2,boxShadow:'2',}}>
+    <Box sx={{ padding: 3,  maxWidth: 600, margin: 'auto',marginTop:'1rem', border: '1px solid #ccc', borderRadius: 2,boxShadow:'2',marginLeft:{xs:2,sm:'auto'},marginRight:{xs:2,sm:'auto'}}}>
       {/* <Typography variant="h6" gutterBottom>
         Apply Promo Code
       </Typography> */}

@@ -10,20 +10,26 @@ import ReviewItems from './ReviewItems';
 const steps = ['Select Address', 'Select Payment Method', 'Review Your Order'];
 
 function Checkout() {
-  const { cartItems,addOrder} = useCart();
+  const { cartItems,addOrder,addresses} = useCart();
   const [activeStep, setActiveStep] = useState(0);
-  const [delAddress, setDelAddress] = useState({});
-  const [paymentMethod,setPaymentMethod] = useState("");
+  const [delAddress, setDelAddress] = useState(addresses[0]);
+  const [paymentMethod,setPaymentMethod] = useState("cod");
   const orderDetails={};
   const router = useRouter();
 
  
 
   function addDelAddress(address) {
-    setDelAddress(() => address);
+    if(address){
+      setDelAddress(() => address);
+    }
+    
   }
   function addPaymentMethod(method) {
-    setPaymentMethod(() => method);
+    if(method){
+      setPaymentMethod(() => method);
+    }
+    
   }
 
 
@@ -68,17 +74,19 @@ function Checkout() {
       {activeStep === 0 && (
         <div>
           <AddressSelector addOrderDetails={addDelAddress}/>
-          
+          {console.log(delAddress)}
         </div>
         )}
         {activeStep ===1 && (
           <div>
 
            <PaymentComponent addOrderDetails={addPaymentMethod} />
+           {console.log(paymentMethod)}
            </div>
         )}
         {activeStep ===2 && (
           <div>
+            
             <ReviewItems address={delAddress} paymentMethod={paymentMethod} />
            </div>
         )}

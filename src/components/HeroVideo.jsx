@@ -46,16 +46,58 @@ const HeroSection = () => {
         {/* <Typography variant="h2" component="h1">
           Find top quality medical products <br /> for your needs.
         </Typography> */}
-        <div className="relative top-20 left-4 flex flex-col gap-10 md:w-[60%] md:h-3/4">
-            <div className="flex flex-col gap-3 text-white">
-                <h1 className="text-3xl md:text-5xl font-extrabold">Find top quality <span className="text-green">medical products</span></h1>
-                <h1 className="text-3xl md:text-5xl font-extrabold">for your needs</h1>
-                <p className="text-slate-400 text-base md:text-lg">{heroSection.description}</p>
-            </div>
-            <Search width='50%'/>
+       {/* Left Section */}
+       <Box
+        sx={{
+          position: 'relative',
+          top: { xs: 0, md: 100 }, // Adjust top positioning for mobile
+          left: { xs: 0, md: 50 }, // Adjust left positioning for mobile
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3,
+          width: { xs: '100%', md: '60%' }, // Full width for small screens
+          paddingX: { xs: 2, md: 0 },
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: { xs: '2rem', md: '3rem' },
+              color: 'white',
+            }}
+          >
+            Find top quality <span style={{ color: '#01D6A3' }}>medical products</span>
+          </Typography>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: { xs: '2rem', md: '3rem' },
+              color: 'white',
+            }}
+          >
+            for your needs
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'grey.400',
+              fontSize: { xs: '1rem', md: '1.125rem' },
+            }}
+          >
+            {heroSection.description}
+          </Typography>
+        </Box>
+       
+         <Search width='50%'/>
+  
+      </Box>
             
 
-        </div>  
       </HeroContent>
     </HeroContainer>
   );

@@ -40,7 +40,7 @@ const AddressSelector = ( {addOrderDetails}) => {
 
 
   return (
-    <Paper elevation={3} sx={{ padding: 3, maxWidth: 400, margin: 'auto',marginTop:3 }}>
+    <Paper elevation={3} sx={{ padding: 3, maxWidth: 400, margin: 'auto',marginTop:3, marginLeft:{xs:2,sm:'auto'},marginRight:{xs:2,sm:'auto'} }}>
       <Typography sx={{color:'tertiary.main'}} variant="h6" gutterBottom>
         Select Address
       </Typography>

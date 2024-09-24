@@ -1,6 +1,6 @@
 'use client';
 import { useCart } from '@/contexts/CardContext'
-import { Button, Typography, IconButton,Box } from '@mui/material';
+import { useMediaQuery,Button, Typography, IconButton,Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation' 
@@ -14,6 +14,9 @@ const CartContainer = styled.div`
   border-radius: 5px;
   margin-top:3rem;
   box-shadow: 1px;
+  @media (max-width: 600px) {
+    margin:0.5rem;
+  }
 `;
 
 const CartItem = styled.div`
@@ -38,6 +41,7 @@ const QuantityControls = styled.div`
 `;
 
 const CartPage = () => {
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const { currentUser, logout } = useAuth();
   const router = useRouter(); 
   const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -78,12 +82,16 @@ const CartPage = () => {
                 <Typography variant="subtitle1">
                   {'\u20B9'} {item.Price} x {item.quantity}
                 </Typography>
-              </ItemDetails>
-              
-                <Counter item = {item}
+                {isMobile && (<Counter item = {item}
                     updateQuantity={updateQuantity}
                     removeFromCart ={removeFromCart} 
-                  />
+                  />)}
+              </ItemDetails>
+              
+               {!isMobile && (<Counter item = {item}
+                    updateQuantity={updateQuantity}
+                    removeFromCart ={removeFromCart} 
+                  />)} 
                 <IconButton onClick={() => removeFromCart(item.id)}>
                   <DeleteIcon />
                 </IconButton>

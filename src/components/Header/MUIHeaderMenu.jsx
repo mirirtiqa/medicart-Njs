@@ -14,6 +14,7 @@ import Avatar from '@mui/material/Avatar';
 import { HeaderMenuOptions } from '@/constants/index';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import MobileUserDrawer from '../MobileUserDrawer';
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
@@ -133,7 +134,7 @@ export default function MUIHeaderMenu() {
 
         {/* Right Icons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
-          {currentUser ? (
+          {currentUser ? (<>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <UserDetailsTooltip useremail={currentUser.email}>
                 {currentUser.photoURL ? (
@@ -151,7 +152,15 @@ export default function MUIHeaderMenu() {
                 )}
               </UserDetailsTooltip>
             </Box>
-          ) : (
+             <Drawer
+             anchor="left"
+             open={isFilterDrawerOpen}
+             onClose={() => setIsFilterDrawerOpen(false)}
+           >
+            <MobileUserDrawer onTap={setIsFilterDrawerOpen}/>
+             
+           </Drawer>
+           </>) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}>
               <MuiButton sx={{
                 '&:hover': {

@@ -25,7 +25,6 @@ const Header = () => {
           flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
           alignItems: 'center',
-          height: '100%',
           px: 2,
         }}
       >

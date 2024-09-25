@@ -16,7 +16,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { useAuth } from '@/contexts/AuthContexts';
-import { useMediaQuery } from '@mui/material';
 
 const CustomFormControl = styled(FormControl)(({ theme }) => ({
   width: '100%',
@@ -90,7 +89,6 @@ const DoctorDetails = ({ params }) => {
         const doctorData = doctorSnap.data();
         const availability = doctorData.availability || {};
 
-        // Fetch accepted appointments for the doctor and the selected date
         const appointmentsRef = collection(db, 'appointments');
         const q = query(
           appointmentsRef,
@@ -100,13 +98,10 @@ const DoctorDetails = ({ params }) => {
         );
         const querySnapshot = await getDocs(q);
 
-        // Get the list of accepted time slots
         const acceptedTimes = querySnapshot.docs.map(doc => doc.data().time);
 
-        // Filter out the accepted time slots from the available ones
         const availableTimes = (availability[date] || []).filter(time => !acceptedTimes.includes(time));
 
-        // Check if the date is in the future before setting available slots
         const today = new Date();
         const selectedDate = new Date(date);
 
@@ -118,7 +113,7 @@ const DoctorDetails = ({ params }) => {
         } else {
           setAvailableSlots((prev) => ({
             ...prev,
-            [id]: [], // Clear slots for past dates
+            [id]: [],
           }));
         }
       }
@@ -151,13 +146,12 @@ const DoctorDetails = ({ params }) => {
       ...prevState,
       [id]: {
         ...prevState[id],
-        time: prevState[id]?.time === time ? undefined : time, // Deselect if clicked again
+        time: prevState[id]?.time === time ? undefined : time,
       },
     }));
   };
 
   const handleBookAppointment = async () => {
-    // Check if the logged-in user is a doctor
     if (isDoctor) {
       setDialogMessage('Doctors cannot book appointments.');
       setOpenDialog(true);
@@ -219,21 +213,30 @@ const DoctorDetails = ({ params }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '80vh',
+        height: `100vh`,
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(to left,#01D6A3, #033B4A)',
       }}
     >
       <CustomCard
         sx={{
           display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
           justifyContent: 'space-between',
           padding: 3,
           width: '100%',
           maxWidth: '800px',
-          boxShadow: '0px 4px 30px rgba(0, 0, 0, 0.7)',
+          margin: { xs: '0 20px', md: '0' },
+          boxShadow: '0px 4px 30px rgba(0, 0, 0, 0.5)',
           borderRadius: '16px',
-          transition: 'transform 0.3s ease',
+          transition: 'max-height 0.5s ease-in-out, transform 0.3s ease',
+          overflow: 'hidden',
           '&:hover': {
-            transform: 'scale(1.02)',
+            transform: {
+              xs: 'none',
+              md: 'scale(1.05)',
+            },
           },
         }}
       >
@@ -263,13 +266,22 @@ const DoctorDetails = ({ params }) => {
             alignItems: 'center',
             textAlign: 'center',
             overflow: 'hidden',
-            transition: 'max-height 0.5s ease-in-out', // Smooth transition for height
-            maxHeight: availableSlots[id] ? '500px' : '100px',
+            maxHeight: { xs: availableSlots[id] ? '300px' : '100px', md: availableSlots[id] ? '500px' : '100px' },
+            transition: 'max-height 0.5s ease-in-out',
           }}
         >
           <Box sx={{ marginTop: '20px' }}>
             <InputLabel>Select a Date:</InputLabel>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '10px',
+                justifyContent: 'center',
+                maxHeight: '150px',
+                overflowY: 'auto',
+              }}
+            >
               {doctor.availability
                 ? Object.keys(doctor.availability)
                   .sort((a, b) => new Date(a) - new Date(b))
@@ -289,7 +301,7 @@ const DoctorDetails = ({ params }) => {
           </Box>
 
           {availableSlots[id] && availableSlots[id].length > 0 && (
-            <Box sx={{ marginTop: '20px', maxHeight: '200px', overflowY: 'auto' }}> {/* Adjust maxHeight as needed */}
+            <Box sx={{ marginTop: '20px', maxHeight: '150px', overflowY: 'auto' }}>
               <InputLabel>Select a Time Slot:</InputLabel>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
                 {availableSlots[id].map((time, index) => (
@@ -309,7 +321,7 @@ const DoctorDetails = ({ params }) => {
           <CardActions sx={{ justifyContent: 'center' }}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: '#01D6A3', color: '#fff',margin:'10px' }}
+              sx={{ backgroundColor: '#01D6A3', color: '#fff', margin: '10px' }}
               onClick={handleBookAppointment}
               disabled={!selectedAppointments[id]?.date || !selectedAppointments[id]?.time}
             >
@@ -330,5 +342,4 @@ const DoctorDetails = ({ params }) => {
     </Box>
   );
 };
-
 export default DoctorDetails;

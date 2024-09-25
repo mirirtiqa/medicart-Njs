@@ -18,6 +18,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { useAuth } from '@/contexts/AuthContexts';
+import { TextField } from '@mui/material';
+import Slider from '@mui/material/Slider';
 
 const CustomFormControl = styled(FormControl)(({ theme }) => ({
   width: '100%',
@@ -50,6 +52,8 @@ export default function DoctorsPage() {
   const [expandedDoctorId, setExpandedDoctorId] = useState(null);
   const { currentUser } = useAuth();
   const [isDoctor, setIsDoctor] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priceRange, setPriceRange] = useState([0, 5000]);
 
   const fetchAllDoctors = async () => {
     setLoading(true);
@@ -240,12 +244,30 @@ export default function DoctorsPage() {
     setOpenDialog(false);
   };
 
+  const handleSearchChange = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    // Filter doctors based on the search term
+    const filtered = doctorsList.filter((doctor) =>
+      doctor.name.toLowerCase().includes(value)
+    );
+    setFilteredDoctors(filtered);
+  };
+
   return (
     <div>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography fontWeight={'bold'} variant="h4" sx={{ padding: '25px' }}>
-          Available Doctors
+          Search Doctors
         </Typography>
+        <TextField
+          variant="outlined"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ margin: '25px', width: '25%' }}
+        />
         <CustomFormControl variant="outlined" sx={{ width: '25%' }}>
           <InputLabel sx={{ padding: '15px' }}>Filter by Specialization</InputLabel>
           <Select
@@ -267,14 +289,16 @@ export default function DoctorsPage() {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
+          marginLeft:'3%',
+          marginRight:{xs:'2%',sm:'2%',md:'2%', lg:'0'},
           justifyContent: {
             xs: 'center', // For small screens
             sm: 'center', // For medium screens
             md: 'center', // For medium-large screens (up to 1200px)
-            lg: 'center', // For screens between 1200px and 1375px
+            lg: 'left', // For screens between 1200px and 1375px
           }, // Center on small and medium, flex-start on big
           gap: '4rem',
-          padding: { xs: '1rem', sm: '2rem', md: '3rem' },
+          paddingTop: { xs: '1rem', sm: '2rem', md: '3rem' },
         }}
       >
         {filteredDoctors.length === 0 ? (
@@ -284,7 +308,7 @@ export default function DoctorsPage() {
             <Card
               key={doctor.id}
               sx={{
-                width: { xs: '100%', md: '45%', lg: '20%' },
+                width: { xs: '100%', md: '45%', lg: '21%' },
                 marginBottom: '20px',
                 border: '2px solid black',
                 borderRadius: '10px',
@@ -313,7 +337,7 @@ export default function DoctorsPage() {
                   Fees: ₹{doctor.fees}
                 </Typography>
 
-                <Box sx={{ marginTop: '20px' }}>
+                <Box sx={{ marginTop: '20px', maxHeight: '100px', overflowY: 'auto' }}>
                   <InputLabel sx={{ marginBottom: '10px' }}>Select a Date:</InputLabel>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                     {doctor.availability
@@ -335,7 +359,13 @@ export default function DoctorsPage() {
                 </Box>
 
                 {expandedDoctorId === doctor.id && availableSlots[doctor.id] && availableSlots[doctor.id].length > 0 && (
-                  <Box sx={{ marginTop: '20px' }}>
+                  <Box
+                  sx={{
+                    marginTop: '20px',
+                    maxHeight: '150px', // Limit the height of the time slot section
+                    overflowY: 'auto', // Enable vertical scrolling
+                  }}
+                >
                     <InputLabel sx={{ marginBottom: '10px' }}>Select a Time Slot:</InputLabel>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                       {availableSlots[doctor.id].map((time, index) => (

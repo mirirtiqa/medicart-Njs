@@ -1,56 +1,52 @@
-"use client"
-import React, { useState } from 'react';
-import { Paper, RadioGroup, Radio, FormControlLabel, Button, Link, TextField, Box, Typography } from '@mui/material';
-import { useCart } from '@/contexts/CardContext'
+"use client";
+import React, { useState, useEffect } from 'react';
+import { Paper, RadioGroup, Radio, FormControlLabel, Button, Typography } from '@mui/material';
+import { useCart } from '@/contexts/CardContext';
 import AddAddressDialog from '@/components/AddAddressDialog';
-const AddressSelector = ( {addOrderDetails}) => {
-    const {addresses, addToAddresses} = useCart();
 
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const handleOpenDialog = () => {
-        setDialogOpen(true);
-      };
-    
-      const handleCloseDialog = () => {
-        setDialogOpen(false);
-      };
-    
-      const handleAddAddress = (address) => {
-        console.log('Address added:', address);
-        addToAddresses(address)
-      };
+const AddressSelector = ({ addOrderDetails }) => {
+  const { addresses, addToAddresses } = useCart();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState('');
 
-  const [selectedAddress, setSelectedAddress] = useState(0);
-
-
- 
-  const handleSelectChange = (event) => {
-    const index = event.target.value;
-    const selectedDeliveryAddress = addresses[index];
-    console.log("selected")
-    console.log(selectedDeliveryAddress);
-    
-    addOrderDetails(selectedDeliveryAddress);
-    setSelectedAddress(event.target.value);
-    
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
   };
 
-  
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
+  const handleAddAddress = (address) => {
+    addToAddresses(address);
+    setSelectedAddress(address); // Automatically select the newly added address
+    addOrderDetails(address);
+  };
 
+  const handleSelectChange = (event) => {
+    const selectedDeliveryAddress = event.target.value;
+    setSelectedAddress(selectedDeliveryAddress);
+    addOrderDetails(selectedDeliveryAddress);
+  };
+
+  useEffect(() => {
+    if (addresses.length > 0) {
+      setSelectedAddress(addresses[0]); // Set default to the first address if available
+      addOrderDetails(addresses[0]);
+    }
+  }, [addresses]);
 
   return (
-    <Paper elevation={3} sx={{ padding: 3, maxWidth: 400, margin: 'auto',marginTop:3, marginLeft:{xs:2,sm:'auto'},marginRight:{xs:2,sm:'auto'} }}>
-      <Typography sx={{color:'tertiary.main'}} variant="h6" gutterBottom>
+    <Paper elevation={3} sx={{ padding: 3, maxWidth: 400, margin: 'auto', marginTop: 3 }}>
+      <Typography sx={{ color: 'tertiary.main' }} variant="h6" gutterBottom>
         Select Address
       </Typography>
 
       <RadioGroup value={selectedAddress} onChange={handleSelectChange}>
-        {addresses.map((address, index) => (
+        {addresses.map((address) => (
           <FormControlLabel
-          sx={{padding:'0.8rem'}}
-            key={index}
-            value={index}
+            key={address.id}
+            value={address} // Use address object as the value
             control={<Radio />}
             label={`${address.fullName}, 
                     ${address.mobileNumber},
@@ -59,20 +55,18 @@ const AddressSelector = ( {addOrderDetails}) => {
                     ${address.landmark}, 
                     ${address.city}, 
                     ${address.state}, 
-                   ${address.pincode},
+                    ${address.pincode},
                     ${address.country}`}
           />
         ))}
       </RadioGroup>
 
-      <Button variant="outlined" sx={{color:'tertiary.main', borderColor:"tertiary.main",marginTop:'1rem'}} onClick={handleOpenDialog}>Add New address</Button>
-          <AddAddressDialog
+      <Button variant="outlined" sx={{ color: 'tertiary.main', borderColor: "tertiary.main", marginTop: '1rem' }} onClick={handleOpenDialog}>Add New Address</Button>
+      <AddAddressDialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         addToAddresses={handleAddAddress}
       />
-
-     
     </Paper>
   );
 };

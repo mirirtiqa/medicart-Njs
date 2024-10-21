@@ -36,7 +36,7 @@ export default function UserDetailsTooltip({ children }) {
         const doctorDoc = await getDoc(doctorDocRef);
         if (doctorDoc.exists()) {
           setIsDoctor(true);
-          setDoctorName(`Dr. ${doctorDoc.data().name || currentUser.displayName || 'No name'}`);
+          setDoctorName(`Dr. ${doctorDoc.data().name || currentUser.name || 'No name'}`);
         } else {
           setIsDoctor(false);
         }

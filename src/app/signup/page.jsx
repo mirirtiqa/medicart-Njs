@@ -5,42 +5,39 @@ import { useAuth } from '@/contexts/AuthContexts';
 import { useRouter } from 'next/navigation';
 import { db } from "@/lib/firebase";
 import { doc, setDoc, getDocs, collection, query, where } from "firebase/firestore";
-import GoogleIcon from '@mui/icons-material/Google'; // Import Google Icon
+import GoogleIcon from '@mui/icons-material/Google';
 
 export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isDoctorSignup, setIsDoctorSignup] = useState(false); // State to toggle between user and doctor signup
-  const [doctorPasswordPrompt, setDoctorPasswordPrompt] = useState(false); // State for password prompt
-  const [doctorPassword, setDoctorPassword] = useState(''); // State to store the doctor password input
+  const [isDoctorSignup, setIsDoctorSignup] = useState(false);
+  const [doctorPasswordPrompt, setDoctorPasswordPrompt] = useState(false);
+  const [doctorPassword, setDoctorPassword] = useState('');
 
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const doctorCodeRef = useRef(); // Ref for Doctor's code
+  const doctorCodeRef = useRef();
 
   const { signup, signInWithGoogle } = useAuth();
   const router = useRouter();
 
-  // Initialize user function for regular users
   const initializeUser = async (userId) => {
     try {
       const userDocRef = doc(db, "users", userId);
-      await setDoc(userDocRef, { itemsInCart: [], addresses: [], orders:[], appointments:[], });
+      await setDoc(userDocRef, { itemsInCart: [], addresses: [], orders: [], appointments: [] });
       console.log("User profile initialized for:", userId);
     } catch (error) {
       console.error("Error initializing user profile:", error);
     }
   };
 
-  // Function to check if doctor's code is unique
   const isDoctorCodeUnique = async (code) => {
     const doctorQuery = query(collection(db, "doctors"), where("code", "==", code));
     const querySnapshot = await getDocs(doctorQuery);
     return querySnapshot.empty;
   };
 
-  // Validation for alphanumeric code
   const isValidAlphanumeric = (code) => /^[a-zA-Z0-9]{8}$/.test(code);
 
   const handleSubmit = async (e) => {
@@ -56,30 +53,27 @@ export default function Signup() {
       const userCredential = await signup(emailRef.current.value, passwordRef.current.value);
       const user = userCredential.user;
 
-      // Differentiate between user and doctor signups
       if (isDoctorSignup) {
         const doctorCode = doctorCodeRef.current.value;
 
-        // Check if the code is valid and alphanumeric
         if (!isValidAlphanumeric(doctorCode)) {
           throw new Error('Doctor code must be exactly 8 alphanumeric characters.');
         }
 
-        // Check if the code is unique
         const isUnique = await isDoctorCodeUnique(doctorCode);
         if (!isUnique) {
           throw new Error('This doctor code is already in use. Please choose a different code.');
         }
 
-        // Save doctor's code to Firestore
         const doctorDocRef = doc(db, "doctors", user.uid);
         await setDoc(doctorDocRef, { code: doctorCode });
         console.log("Doctor's details saved:", user.uid);
       } else {
-        await initializeUser(user.uid); // Initialize user profile for regular users
+        await initializeUser(user.uid);
       }
 
-      router.push('/');
+      // Redirect to login with a success message
+      router.push('/login?signupSuccess=true');
     } catch (err) {
       setError(err.message || 'Sorry! Failed to create an account');
       console.error(err.message);
@@ -88,7 +82,6 @@ export default function Signup() {
     }
   };
 
-  // Google Sign-in handler
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
@@ -116,7 +109,7 @@ export default function Signup() {
         await initializeUser(user.uid);
       }
 
-      router.push('/');
+      router.push('/login?signupSuccess=true');
     } catch (err) {
       setError(err.message || 'Sorry! Failed to create an account');
       console.error(err.message);
@@ -125,7 +118,6 @@ export default function Signup() {
     }
   };
 
-  // Function to handle password protection before doctor signup
   const handleDoctorSignup = () => {
     if (doctorPassword === "MediCart") {
       setIsDoctorSignup(true);
@@ -213,7 +205,7 @@ export default function Signup() {
                 disabled={loading}
                 sx={{ border: '1px solid black', padding: '0.5rem 1rem', textTransform: 'none', display: 'flex', alignItems: 'center' }}
               >
-                <GoogleIcon sx={{ marginRight: 1, color: 'inherit' }} /> {/* Google icon with inherited color */}
+                <GoogleIcon sx={{ marginRight: 1, color: 'inherit' }} />
                 Sign up with Google
               </Button>
             </Box>
@@ -235,21 +227,20 @@ export default function Signup() {
                 onChange={(e) => setDoctorPassword(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    handleDoctorSignup(); // Trigger the Confirm button click on Enter
+                    handleDoctorSignup();
                   }
                 }}
               />
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ mt: 2,mb: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
+                sx={{ mt: 2, mb: 2, backgroundColor: 'tertiary.main', color: 'secondary.main' }}
                 onClick={handleDoctorSignup}
               >
                 Confirm
               </Button>
             </Box>
           )}
-
 
           {!doctorPasswordPrompt && (
             <Typography variant="body2" align="center" sx={{ mt: 2 }}>
